@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Androidstartkits on ChiakiMayuzumi</title>
-    <link>https://chiakimayuzumi.github.io/androidstartkit/</link>
+    <link>http://chiakimayuzumi.github.io/androidstartkit/</link>
     <description>Recent content in Androidstartkits on ChiakiMayuzumi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 09 Mar 2016 20:10:46 +0100</lastBuildDate>
-    <atom:link href="https://chiakimayuzumi.github.io/androidstartkit/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://chiakimayuzumi.github.io/androidstartkit/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>讲一下 network</title>
-      <link>https://chiakimayuzumi.github.io/androidstartkit/network/</link>
+      <link>http://chiakimayuzumi.github.io/androidstartkit/network/</link>
       <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
       
-      <guid>https://chiakimayuzumi.github.io/androidstartkit/network/</guid>
+      <guid>http://chiakimayuzumi.github.io/androidstartkit/network/</guid>
       <description>&lt;p&gt;Copyright &amp;copy; 2016 Digitalcraftsman &lt;a href=&#34;mailto:digitalcraftsman@protonmail.com&#34;&gt;digitalcraftsman@protonmail.com&lt;/a&gt;&lt;br&gt;
 Copyright &amp;copy; 2016 Martin Donath &lt;a href=&#34;mailto:martin.donath@squidfunk.com&#34;&gt;martin.donath@squidfunk.com&lt;/a&gt;&lt;/p&gt;
 
@@ -40,10 +40,10 @@ IN THE SOFTWARE.&lt;/p&gt;
     
     <item>
       <title>这是一篇具体的文章</title>
-      <link>https://chiakimayuzumi.github.io/androidstartkit/</link>
+      <link>http://chiakimayuzumi.github.io/androidstartkit/</link>
       <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
       
-      <guid>https://chiakimayuzumi.github.io/androidstartkit/</guid>
+      <guid>http://chiakimayuzumi.github.io/androidstartkit/</guid>
       <description>&lt;p&gt;Copyright &amp;copy; 2016 Digitalcraftsman &lt;a href=&#34;mailto:digitalcraftsman@protonmail.com&#34;&gt;digitalcraftsman@protonmail.com&lt;/a&gt;&lt;br&gt;
 Copyright &amp;copy; 2016 Martin Donath &lt;a href=&#34;mailto:martin.donath@squidfunk.com&#34;&gt;martin.donath@squidfunk.com&lt;/a&gt;&lt;/p&gt;
 
