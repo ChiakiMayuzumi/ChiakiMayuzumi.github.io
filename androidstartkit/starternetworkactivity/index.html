@@ -8,18 +8,18 @@
   <head lang="en-us">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
-    <title>Androidstartkits - ChiakiMayuzumi</title>
+    <title>Using StarterNetworkActivity to make easier HTTP request - ChiakiMayuzumi</title>
     <meta name="generator" content="Hugo 0.15" />
 
     
     <meta name="description" content="A material design theme for documentations.">
     
-    <link rel="canonical" href="http://chiakimayuzumi.github.io/androidstartkit/">
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
     
     <meta name="author" content="ChiakiMayuzumi">
     
 
-    <meta property="og:url" content="http://chiakimayuzumi.github.io/androidstartkit/">
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
     <meta property="og:title" content="ChiakiMayuzumi">
     <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
     <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
@@ -68,12 +68,11 @@
     <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
 
     
-    <link href="http://chiakimayuzumi.github.io/androidstartkit/index.xml" rel="alternate" type="application/rss+xml" title="ChiakiMayuzumi" />
-    <link href="http://chiakimayuzumi.github.io/androidstartkit/index.xml" rel="feed" type="application/rss+xml" title="ChiakiMayuzumi" />
-    
 
   </head>
   <body class="palette-primary-light red palette-accent-light green">
+
+
 
 
 <div class="backdrop">
@@ -94,7 +93,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Androidstartkit
+        Using StarterNetworkActivity to make easier HTTP request
       </div>
     </div>
 
@@ -214,18 +213,178 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Pages in Androidstartkit</h1>
+			<h1>Using StarterNetworkActivity to make easier HTTP request </h1>
 
 			
-			<a href="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/" title="Using StarterNetworkActivity to make easier HTTP request">
-				<h2>Using StarterNetworkActivity to make easier HTTP request</h2>
-			</a>
 
-			<br>
-			android-starter-kit android-starter-kit is a fast development kit for Android developer,and this topic describes how to use StarterNetworkActivity to make your new activity’s HTTP requests easier. Overview To make the HTTP requests, we could use some third-party libraries such as retrofit 2.0,which is known as a type-safe HTTP client for Android and Java. android-starter-kit simply encapsulates retrofit 2.0 in it so if you are familiar with retrofit 2.0,it won’t be difficult for you to use StarterNetworkActivity.
+<p><a href="https://github.com/qijitech/android-starter-kit">android-starter-kit</a></p>
 
-			<hr>
-			
+<p><code>android-starter-kit</code> is a fast development kit for Android developer,and this topic describes how to use <code>StarterNetworkActivity</code> to make your new activity’s HTTP requests easier.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>To make the HTTP requests, we could use some third-party libraries such as <code>retrofit 2.0</code>,which is known as a type-safe HTTP client for Android and Java.</p>
+
+<p><code>android-starter-kit</code> simply encapsulates <code>retrofit 2.0</code> in it so if you are familiar with <code>retrofit 2.0</code>,it won’t be difficult for you to use <code>StarterNetworkActivity</code>.</p>
+
+<h2 id="how-to-use">How to use</h2>
+
+<p>In <code>android-starter-kit</code> demo App ,<code>LoginActivity</code> shows how to use <code>StarterNetworkActivity</code>,so let’s see the source code in :</p>
+
+<pre><code>  com.smartydroid.android.kit.demo.ui.activity.LoginActivity
+</code></pre>
+
+<h2 id="preparations">Preparations</h2>
+
+<p>Preparations must be done before using <code>StarterNetworkActivity</code>,which contains:</p>
+
+<ul>
+<li>a proper entity class</li>
+<li>get RetrofitBuilder with baseUrl</li>
+<li>get apiService and your own HTTP service interface</li>
+</ul>
+
+<h3 id="a-proper-entity-class">a proper entity class</h3>
+
+<p>Define your own entity class which extends <code>Entity</code> class.</p>
+
+<p>Demo App provides an entity class named <code>User</code>:</p>
+
+<pre><code>@JsonIgnoreProperties(ignoreUnknown = true) public class User extends Entity implements Account {
+
+  public Integer id;
+  public String phone;
+  public String nickname;
+  public String avatar;
+  public String token;
+
+  public User() {
+
+  }
+……
+</code></pre>
+
+<h3 id="get-retrofitbuilder-with-baseurl">get RetrofitBuilder with baseUrl</h3>
+
+<p>You should get the <code>RetrofitBuilder</code> in your Application class which extends <code>StarterKitApp</code>.</p>
+
+<p>In demo App the Application Class is <code>DemoApp</code>:</p>
+
+<pre><code>public class DemoApp extends StarterKitApp {
+……
+</code></pre>
+
+<p><code>DemoApp</code> is a base class for those who need to maintain global application state,in which we get <code>RetrofitBuilder</code>:</p>
+
+<pre><code> @Override public void onCreate() {
+
+    // common config
+    ……
+    super.onCreate();
+  ……
+    // init api service
+    new RetrofitBuilder.Builder()
+        .accept(Profile.API_ACCEPT)
+        .baseUrl(Profile.API_ENDPOINT)
+        .build();
+  ……
+  }
+</code></pre>
+
+<p>baseUrl <code>API_ENDPOINT</code> is in <code>Profile</code> interface:</p>
+
+<pre><code>public interface Profile {
+
+  String API_ENDPOINT = &quot;http://fakerapi.qiji.tech&quot;;
+  ……
+</code></pre>
+
+<h3 id="get-apiservice-and-your-own-http-service-interface">get ApiService and your own HTTP service interface</h3>
+
+<p>Retrofit turns your HTTP API into a Java interface,so write your own HTTP service interface using the defined entity:</p>
+
+<pre><code>public interface AuthService {
+
+  /**
+   * Login Interface
+   *
+   * @param phone 
+   * @param password 
+   * @return Call
+   */
+  @FormUrlEncoded @POST(&quot;/auth/login&quot;) Call&lt;User&gt; login(
+      @Field(&quot;phone&quot;) String phone,
+      @Field(&quot;password&quot;) String password);
+
+  @GET(&quot;/user/profile&quot;) Call&lt;User&gt; profile();
+}
+</code></pre>
+
+<p>ApiService is defined to get your own HTTP service or other HTTP service with <code>retrofit</code>:</p>
+
+<pre><code>public class ApiService {
+
+  // create your HTTP interface with retrofit
+  public static AuthService createAuthService() {
+    return retrofit().create(AuthService.class);
+  }
+  
+  // create other HTTP interface with retrofit
+  public static FeedService createFeedService() {
+    return retrofit().create(FeedService.class);
+  }
+
+  // get retrofit
+  private static Retrofit retrofit() {
+    return RetrofitBuilder.get().retrofit();
+  }
+}
+</code></pre>
+
+<h2 id="using-starternetworkactivity">Using StarterNetworkActivity</h2>
+
+<p>Define your own activity extends <code>StarterNetworkActivity</code>：</p>
+
+<pre><code>public class LoginActivity extends StarterNetworkActivity&lt;User&gt; {
+……
+</code></pre>
+
+<p>Next, get defined HTTP service interface in method <code>onCreate</code>:</p>
+
+<pre><code>……
+ private AuthService mAuthService;
+
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_login);
+
+    mAuthService = ApiService.createAuthService();
+……
+</code></pre>
+
+<p>The following override callbacks should be paid attention to:</p>
+
+<pre><code>  // call before request
+  @Override public void startRequest() {
+    showHud(“Logining...&quot;);
+  }
+
+  // call after request success with your defined entity class
+  @Override public void respondSuccess(User data) {
+    AccountManager.store(data);
+    Snackbar.make(getWindow().getDecorView(), “Login Success”, Snackbar.LENGTH_SHORT).show();
+    Intent upIntent = NavUtils.getParentActivityIntent(this);
+    NavUtils.navigateUpTo(this, upIntent);
+  }
+  
+  // call when request end
+  @Override public void endRequest() {
+    dismissHud();
+  }
+</code></pre>
+
+<p>That&rsquo;s all.</p>
+
 
 			<aside class="copyright" role="note">
 				
@@ -236,6 +395,41 @@
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
 			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/" title="博客目录">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              博客目录
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
 		</div>
 	</article>
 

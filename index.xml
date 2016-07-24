@@ -10,60 +10,180 @@
     <atom:link href="http://chiakimayuzumi.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>讲一下 network</title>
-      <link>http://chiakimayuzumi.github.io/androidstartkit/network/</link>
+      <title>Using StarterNetworkActivity to make easier HTTP request</title>
+      <link>http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/</link>
       <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
       
-      <guid>http://chiakimayuzumi.github.io/androidstartkit/network/</guid>
-      <description>&lt;p&gt;Copyright &amp;copy; 2016 Digitalcraftsman &lt;a href=&#34;mailto:digitalcraftsman@protonmail.com&#34;&gt;digitalcraftsman@protonmail.com&lt;/a&gt;&lt;br&gt;
-Copyright &amp;copy; 2016 Martin Donath &lt;a href=&#34;mailto:martin.donath@squidfunk.com&#34;&gt;martin.donath@squidfunk.com&lt;/a&gt;&lt;/p&gt;
+      <guid>http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/</guid>
+      <description>
 
-&lt;p&gt;Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the &amp;ldquo;Software&amp;rdquo;), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/qijitech/android-starter-kit&#34;&gt;android-starter-kit&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;android-starter-kit&lt;/code&gt; is a fast development kit for Android developer,and this topic describes how to use &lt;code&gt;StarterNetworkActivity&lt;/code&gt; to make your new activity’s HTTP requests easier.&lt;/p&gt;
 
-&lt;p&gt;THE SOFTWARE IS PROVIDED &amp;ldquo;AS IS&amp;rdquo;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>这是一篇具体的文章</title>
-      <link>http://chiakimayuzumi.github.io/androidstartkit/</link>
-      <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
-      
-      <guid>http://chiakimayuzumi.github.io/androidstartkit/</guid>
-      <description>&lt;p&gt;Copyright &amp;copy; 2016 Digitalcraftsman &lt;a href=&#34;mailto:digitalcraftsman@protonmail.com&#34;&gt;digitalcraftsman@protonmail.com&lt;/a&gt;&lt;br&gt;
-Copyright &amp;copy; 2016 Martin Donath &lt;a href=&#34;mailto:martin.donath@squidfunk.com&#34;&gt;martin.donath@squidfunk.com&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
 
-&lt;p&gt;Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the &amp;ldquo;Software&amp;rdquo;), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:&lt;/p&gt;
+&lt;p&gt;To make the HTTP requests, we could use some third-party libraries such as &lt;code&gt;retrofit 2.0&lt;/code&gt;,which is known as a type-safe HTTP client for Android and Java.&lt;/p&gt;
 
-&lt;p&gt;The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;android-starter-kit&lt;/code&gt; simply encapsulates &lt;code&gt;retrofit 2.0&lt;/code&gt; in it so if you are familiar with &lt;code&gt;retrofit 2.0&lt;/code&gt;,it won’t be difficult for you to use &lt;code&gt;StarterNetworkActivity&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;THE SOFTWARE IS PROVIDED &amp;ldquo;AS IS&amp;rdquo;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.&lt;/p&gt;
+&lt;h2 id=&#34;how-to-use&#34;&gt;How to use&lt;/h2&gt;
+
+&lt;p&gt;In &lt;code&gt;android-starter-kit&lt;/code&gt; demo App ,&lt;code&gt;LoginActivity&lt;/code&gt; shows how to use &lt;code&gt;StarterNetworkActivity&lt;/code&gt;,so let’s see the source code in :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  com.smartydroid.android.kit.demo.ui.activity.LoginActivity
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;preparations&#34;&gt;Preparations&lt;/h2&gt;
+
+&lt;p&gt;Preparations must be done before using &lt;code&gt;StarterNetworkActivity&lt;/code&gt;,which contains:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;a proper entity class&lt;/li&gt;
+&lt;li&gt;get RetrofitBuilder with baseUrl&lt;/li&gt;
+&lt;li&gt;get apiService and your own HTTP service interface&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;a-proper-entity-class&#34;&gt;a proper entity class&lt;/h3&gt;
+
+&lt;p&gt;Define your own entity class which extends &lt;code&gt;Entity&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;Demo App provides an entity class named &lt;code&gt;User&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@JsonIgnoreProperties(ignoreUnknown = true) public class User extends Entity implements Account {
+
+  public Integer id;
+  public String phone;
+  public String nickname;
+  public String avatar;
+  public String token;
+
+  public User() {
+
+  }
+……
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;get-retrofitbuilder-with-baseurl&#34;&gt;get RetrofitBuilder with baseUrl&lt;/h3&gt;
+
+&lt;p&gt;You should get the &lt;code&gt;RetrofitBuilder&lt;/code&gt; in your Application class which extends &lt;code&gt;StarterKitApp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In demo App the Application Class is &lt;code&gt;DemoApp&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class DemoApp extends StarterKitApp {
+……
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;DemoApp&lt;/code&gt; is a base class for those who need to maintain global application state,in which we get &lt;code&gt;RetrofitBuilder&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; @Override public void onCreate() {
+
+    // common config
+    ……
+    super.onCreate();
+  ……
+    // init api service
+    new RetrofitBuilder.Builder()
+        .accept(Profile.API_ACCEPT)
+        .baseUrl(Profile.API_ENDPOINT)
+        .build();
+  ……
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;baseUrl &lt;code&gt;API_ENDPOINT&lt;/code&gt; is in &lt;code&gt;Profile&lt;/code&gt; interface:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public interface Profile {
+
+  String API_ENDPOINT = &amp;quot;http://fakerapi.qiji.tech&amp;quot;;
+  ……
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;get-apiservice-and-your-own-http-service-interface&#34;&gt;get ApiService and your own HTTP service interface&lt;/h3&gt;
+
+&lt;p&gt;Retrofit turns your HTTP API into a Java interface,so write your own HTTP service interface using the defined entity:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public interface AuthService {
+
+  /**
+   * Login Interface
+   *
+   * @param phone 
+   * @param password 
+   * @return Call
+   */
+  @FormUrlEncoded @POST(&amp;quot;/auth/login&amp;quot;) Call&amp;lt;User&amp;gt; login(
+      @Field(&amp;quot;phone&amp;quot;) String phone,
+      @Field(&amp;quot;password&amp;quot;) String password);
+
+  @GET(&amp;quot;/user/profile&amp;quot;) Call&amp;lt;User&amp;gt; profile();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ApiService is defined to get your own HTTP service or other HTTP service with &lt;code&gt;retrofit&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class ApiService {
+
+  // create your HTTP interface with retrofit
+  public static AuthService createAuthService() {
+    return retrofit().create(AuthService.class);
+  }
+  
+  // create other HTTP interface with retrofit
+  public static FeedService createFeedService() {
+    return retrofit().create(FeedService.class);
+  }
+
+  // get retrofit
+  private static Retrofit retrofit() {
+    return RetrofitBuilder.get().retrofit();
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;using-starternetworkactivity&#34;&gt;Using StarterNetworkActivity&lt;/h2&gt;
+
+&lt;p&gt;Define your own activity extends &lt;code&gt;StarterNetworkActivity&lt;/code&gt;：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class LoginActivity extends StarterNetworkActivity&amp;lt;User&amp;gt; {
+……
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, get defined HTTP service interface in method &lt;code&gt;onCreate&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;……
+ private AuthService mAuthService;
+
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_login);
+
+    mAuthService = ApiService.createAuthService();
+……
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The following override callbacks should be paid attention to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  // call before request
+  @Override public void startRequest() {
+    showHud(“Logining...&amp;quot;);
+  }
+
+  // call after request success with your defined entity class
+  @Override public void respondSuccess(User data) {
+    AccountManager.store(data);
+    Snackbar.make(getWindow().getDecorView(), “Login Success”, Snackbar.LENGTH_SHORT).show();
+    Intent upIntent = NavUtils.getParentActivityIntent(this);
+    NavUtils.navigateUpTo(this, upIntent);
+  }
+  
+  // call when request end
+  @Override public void endRequest() {
+    dismissHud();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;rsquo;s all.&lt;/p&gt;
 </description>
     </item>
     
@@ -77,7 +197,9 @@ IN THE SOFTWARE.&lt;/p&gt;
 
 &lt;h2 id=&#34;android-starter-kit&#34;&gt;android-starter-kit&lt;/h2&gt;
 
-&lt;p&gt;待补充&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity-/&#34;&gt;Using StarterNetworkActivity to make easier HTTP request&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&#34;开源库源码分析&#34;&gt;开源库源码分析&lt;/h2&gt;
 
