@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>ObservableScrollView分析 —— 使用图像的弹性空白布局 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/thirdlib/pictureblank/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/thirdlib/pictureblank/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        ObservableScrollView分析 —— 使用图像的弹性空白布局
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>ObservableScrollView分析 —— 使用图像的弹性空白布局 </h1>
+
+			
+
+<p>这一节主要说明了使用图像来实现弹性空白布局，并给出在各个 View 上如何应用的实例，主要实例有：</p>
+
+<ul>
+<li>FlexibleSpaceWithImageListViewActivity</li>
+<li>FlexibleSpaceWithImageRecyclerViewActivity</li>
+<li>FlexibleSpaceWithImageScrollViewActivity</li>
+</ul>
+
+<p>想要更好的读懂本节文章，请先阅读：<a href="http://blog.qiji.tech/archives/10525">[Android] ObservableScrollView分析（六）—— Toolbar上的弹性空白</a></p>
+
+<h2 id="scrollview-实现弹性空白">ScrollView 实现弹性空白</h2>
+
+<h3 id="scrollview-布局">ScrollView 布局</h3>
+
+<h4 id="基本结构">基本结构</h4>
+
+<pre><code>&lt;FrameLayout&gt;
+    &lt;ImageView android:id=&quot;@+id/image&quot;/&gt;
+    &lt;View android:id=&quot;@+id/overlay&quot;/&gt;
+    &lt;ObservableScrollView android:id=&quot;@+id/scroll&quot;&gt;
+        &lt;LinearLayout android:orientation=&quot;vertical&quot;&gt;
+            &lt;View/&gt;
+            &lt;TextView/&gt;
+        &lt;/LinearLayout&gt;
+    &lt;/ObservableScrollView&gt;
+    &lt;LinearLayout android:orientation=&quot;vertical&quot;&gt;
+        &lt;TextView android:id=&quot;@+id/title&quot;/&gt;
+        &lt;View/&gt;
+    &lt;/LinearLayout&gt;
+    &lt;FloatingActionButton android:id=&quot;@+id/fab&quot;/&gt;
+&lt;/FrameLayout&gt;
+</code></pre>
+
+<p>根布局 FrameLayout 可以实现分别移动其子布局的功能。</p>
+
+<p>ImageView (<code>@id/image</code>) 布局里放的是在移动时会产生视差效果的图片。</p>
+
+<p>View (<code>@id/overlay</code>) 如同它的id名一样，是用来覆盖 ImageView 的一个视图。打开 <code>demo app</code> 中的这个Activity （<code>FlexibleSpaceWithImageScrollViewActivity</code>），滑动一下，你会发现图片会产生一种淡入淡出的效果，产生这个效果的原因就是覆盖在 ImageView 上面的 View 会随着滑动位置的改变而改变其不透明度。</p>
+
+<p>LinearLayout 及其子布局，是整个布局中真正的标题布局。这样的布局在上一节中也出现了，所以不再赘述。</p>
+
+<p>FloatingActionButton 是从 <code>FloatingActionButton</code> 库中导入的一个简单又炫酷的小控件。
+这个控件是可选项，如果你不需要它，可以将它移除。demo app 中放入这个控件是因为它是一个非常典型的遵循 Material Design 风格的控件，也许你们会喜欢。</p>
+
+<p>想要了解其他的属性，可以自己在 <code>demo app</code> 里面查看相应的布局。</p>
+
+<pre><code>res/layout/activity_flexiblespacewithimagescrollview.xml
+</code></pre>
+
+<h3 id="初始化">初始化</h3>
+
+<p>省略掉那些简单的，或者跟本节无关的代码后，只放上相关的初始化代码：</p>
+
+<p>将 <code>title</code> 的值赋给真正的 <code>title view</code>（TextView），然后给原来的 <code>title</code> 赋值为 <code>null</code>：</p>
+
+<pre><code>mTitleView.setText(getTitle());
+setTitle(null);
+</code></pre>
+
+<p>得到资源文件中的尺寸信息，并将它们赋给相应的属性值（这样可以简化动画部分的代码）。</p>
+
+<pre><code>mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
+mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
+mFabMargin = getResources().getDimensionPixelSize(R.dimen.margin_standard);
+mActionBarSize = getActionBarSize();
+</code></pre>
+
+<p>得到布局视图，并将它们赋给相应的属性值（这样可以简化动画部分的代码）。</p>
+
+<pre><code>mImageView = findViewById(R.id.image);
+mOverlayView = findViewById(R.id.overlay);
+mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
+mScrollView.setScrollViewCallbacks(this);
+mTitleView = (TextView) findViewById(R.id.title);
+mFab = findViewById(R.id.fab);
+</code></pre>
+
+<p>尽管跟滚动动画的实现可能没什么关系，还是需要在 <code>onCreate（）</code> 方法中将 floating action button (FAB) 的缩放值设置为 0，因为我们想要在一开始的时候将它隐藏，随着滚动慢慢增加缩放值从而让它显示出来。</p>
+
+<pre><code>ViewHelper.setScaleX(mFab, 0);
+ViewHelper.setScaleY(mFab, 0);
+</code></pre>
+
+<p>有必要给这个 Activity 添加上接口 <code>implements ObservableScrollViewCallbacks</code> 并将这些方法都实现。</p>
+
+<h3 id="动画">动画</h3>
+
+<p>用 <code>onScrollChanged()</code> 方法来产生需要的动画
+为了达到这个目标，需要实现以下的代码：
+- 移动图像视图和它上面的覆盖视图
+- 改变覆盖视图的 <code>alpha</code> 值
+- 移动并缩放 <code>title view</code>
+- 移动 FAB
+- 显示/隐藏 FAB</p>
+
+<h4 id="移动图像视图和它上面的覆盖视图">移动图像视图和它上面的覆盖视图</h4>
+
+<p>参考上一节的内容，想要移动位于 ScrollView 外面的 ImageView 视图，需要使用参数 <code>-scrollY</code> 并且将它除以 2 来产生视差效果。</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  float flexibleRange = mFlexibleSpaceImageHeight - mActionBarSize;
+  int minOverlayTransitionY = mActionBarSize - mOverlayView.getHeight();
+  ViewHelper.setTranslationY(mOverlayView, ScrollUtils.getFloat(-scrollY, minOverlayTransitionY, 0));
+  ViewHelper.setTranslationY(mImageView, ScrollUtils.getFloat(-scrollY / 2, minOverlayTransitionY, 0));
+</code></pre>
+
+<p>即使希望让覆盖图层随着图像一起移动，也不需要让覆盖图层跟着图像用一样的速度移动，所以可以把覆盖图像的移动设置为 <code>-scrollY</code> 而非 <code>-scrollY/2</code>.</p>
+
+<h4 id="改变覆盖视图的-alpha-值">改变覆盖视图的 <code>alpha</code> 值</h4>
+
+<p>计算 <code>alpha</code> 的值，只需要将 <code>scrollY</code> 转换一下，让它在滚动的过程中 <code>alpha</code> 值能从 0 变到 1。具体的操作是用 <code>scrollY</code> 除以 <code>flexibleRange</code>（这个值已经在上面初始化过了），同时用工具类的方法 <code>ScrollUtils.getFloat()</code> 将它限定在 0 到 1 之间。</p>
+
+<pre><code> ViewHelper.setAlpha(mOverlayView, ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1));
+</code></pre>
+
+<h4 id="移动并缩放-title-view">移动并缩放 <code>title view</code></h4>
+
+<p>跟上一节的做法基本上一样，不同的地方只是如何去计算缩放值以及 <code>translationY</code>.</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  // 省略了上面已经解释过的代码
+
+  float scale = 1 + ScrollUtils.getFloat((flexibleRange - scrollY) / flexibleRange, 0, MAX_TEXT_SCALE_DELTA);
+  ViewHelper.setPivotX(mTitleView, 0);
+  ViewHelper.setPivotY(mTitleView, 0);
+  ViewHelper.setScaleX(mTitleView, scale);
+  ViewHelper.setScaleY(mTitleView, scale);
+
+  int maxTitleTranslationY = (int) (mFlexibleSpaceImageHeight - mTitleView.getHeight() * scale);
+  int titleTranslationY = maxTitleTranslationY - scrollY;
+  ViewHelper.setTranslationY(mTitleView, titleTranslationY);
+</code></pre>
+
+<h4 id="移动fab">移动FAB</h4>
+
+<p>基本思想是改变 FAB 的 <code>translationY</code> 参数，然而在 <code>pre-Honeycomb</code> 的设备上，当你用 <code>setOnClickListener（）</code> 方法时可能不会起作用，为了解决这个问题，可以通过设置 FrameLayout 的 <code>margin</code> 值，然后调用 <code>requestLayout（）</code> 再次布局。</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  // 省略了上面已经解释过的代码
+
+  int maxFabTranslationY = mFlexibleSpaceImageHeight - mFab.getHeight() / 2;
+  float fabTranslationY = ScrollUtils.getFloat(
+      -scrollY + mFlexibleSpaceImageHeight - mFab.getHeight() / 2,
+      mActionBarSize - mFab.getHeight() / 2,
+      maxFabTranslationY);
+  if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.HONEYCOMB) {
+    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFab.getLayoutParams();
+    lp.leftMargin = mOverlayView.getWidth() - mFabMargin - mFab.getWidth();
+    lp.topMargin = (int) fabTranslationY;
+    mFab.requestLayout();
+  } else {
+    ViewHelper.setTranslationX(mFab, mOverlayView.getWidth() - mFabMargin - mFab.getWidth());
+    ViewHelper.setTranslationY(mFab, fabTranslationY);
+  }
+</code></pre>
+
+<p>计算 <code>maxFabTranslationY</code> 的表达式 <code>- mFab.getHeight() / 2</code> 表明有一半高度的 FAB 会覆盖在图片的上方，有一个层叠的效果。</p>
+
+<p>也许你会认为 <code>fabTranslationY</code> 值的计算表达式 <code>mActionBarSize - mFab.getHeight() / 2</code> 的最小值可能没有意义，但是当你快速滚动视图的时候，这个最小值的计算是需要的，如果滚动速度快过了 FAB 缩放值变为 0 的速度，FAB 看起来就好像是突然消失了一样。</p>
+
+<h4 id="显示-隐藏-fab">显示/隐藏 FAB</h4>
+
+<p>显示或者隐藏 FAB 的效果比较简单，如果 FAB 的移动距离超过了某个阈值，就将它隐藏，否则，就显示。</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  // 省略了上面已经解释过的代码
+
+  if (fabTranslationY &lt; mFlexibleSpaceShowFabOffset) {
+    hideFab();
+  } else {
+    showFab();
+  }
+}
+</code></pre>
+
+<p>需要自己将 <code>hideFab（）</code> 和 <code>showFab（）</code> 方法的代码完成：</p>
+
+<pre><code>private boolean mFabIsShown;
+
+  private void showFab() {
+    if (!mFabIsShown) {
+      ViewPropertyAnimator.animate(mFab).cancel();
+      ViewPropertyAnimator.animate(mFab).scaleX(1).scaleY(1).setDuration(200).start();
+      mFabIsShown = true;
+    }
+  }
+
+  private void hideFab() {
+    if (mFabIsShown) {
+      ViewPropertyAnimator.animate(mFab).cancel();
+      ViewPropertyAnimator.animate(mFab).scaleX(0).scaleY(0).setDuration(200).start();
+      mFabIsShown = false;
+    }
+  }
+</code></pre>
+
+<p>定义了一个状态变量来表明 FAB 目前是否显示。</p>
+
+<p>到这里就完成了整个图像弹性空白的布局。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>一个 view 的动画效果，也许刚开始看起来很复杂，但是，只要能搞清楚它的布局层次，将动画拆分成若干个子动画，并找到每个布局层次在坐标改变的时候对应的移动规律，就能够理解整个动画效果背后的玄机。</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/toolbarblank/" title="ObservableScrollView分析 —— Toolbar上的弹性空白">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— Toolbar上的弹性空白
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/toolbar/" title="ObservableScrollView分析 —— 显示/隐藏 Toolbar">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— 显示/隐藏 Toolbar
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

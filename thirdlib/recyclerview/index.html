@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>ObservableScrollView分析 —— ObservableRecyclerView 源码分析 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/thirdlib/recyclerview/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/thirdlib/recyclerview/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        ObservableScrollView分析 —— ObservableRecyclerView 源码分析
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>ObservableScrollView分析 —— ObservableRecyclerView 源码分析 </h1>
+
+			
+
+<h2 id="概述">概述</h2>
+
+<p>前面的章节，我们主要介绍了如何利用开源库 ObservableScrollView 来实现出各种我们需要的滚动效果的实例和实现代码，却一直没有分析过在实现过程中所使用的一系列 <code>ObservablexxxView</code> 的源代码，今天我们就来看看，在开源库中 ObservableRecyclerView 的源码。
+ObservableRecyclerView 关系图如下：</p>
+
+<p><a href="http://blog.qiji.tech/wp-content/uploads/2016/05/ObservableRecyclerView-源码分析.png"><img src="http://blog.qiji.tech/wp-content/uploads/2016/05/ObservableRecyclerView-源码分析.png" alt="ObservableRecyclerView 源码分析" /></a></p>
+
+<p>由图可知：ObservableRecyclerView 继承自 RecyclerView 并实现 Scrollable 接口，与此同时，ObservableRecyclerView 还持有四个类的引用，这四个类分别是：ObservableScrollViewCallbacks、ScrollState、ViewGroup 和 MotionEvent，其中：</p>
+
+<p>ObservableScrollViewCallbacks 是开源库所定义的一个回调接口；</p>
+
+<p>ScrollState 是一个枚举类，表示了滑动的三个状态：<code>STOP</code>、<code>UP</code> 和 <code>DOWN</code>；</p>
+
+<p>ViewGroup 用于在 Touch 事件拦截的过程中，指定父类 View；</p>
+
+<p>当用户触摸屏幕时则会产生一个 MotionEvent 对象，在 重写 <code>onTouchEvent()</code> 方法和 <code>onInterceptTouchEvent()</code> 方法时，都需要传入 MotionEvent 参数。</p>
+
+<h2 id="scrollable">Scrollable</h2>
+
+<h3 id="接口方法">接口方法</h3>
+
+<p>首先来看 Scrollable 接口，该接口是开源库所定义的一个接口，给所有接下来需要实现可观测，可滚动的控件（RecyclerView、ScrollView、ListView、WebView 和 GridView）提供了一个通用的应用程序接口，实现该接口必须实现以下几个方法：</p>
+
+<ul>
+<li>setScrollViewCallbacks(ObservableScrollViewCallbacks listener)：设置一个回调监听</li>
+<li>addScrollViewCallbacks(ObservableScrollViewCallbacks listener)：增加一个回调监听</li>
+<li>removeScrollViewCallbacks(ObservableScrollViewCallbacks listener)：删除一个回调监听</li>
+<li>clearScrollViewCallbacks()：清除所有回调监听</li>
+<li>scrollVerticallyTo(int y)：垂直滚动到坐标 y 处（y 为绝对坐标）</li>
+<li>getCurrentScrollY()：返回当前 y 坐标</li>
+<li>setTouchInterceptionViewGroup(ViewGroup viewGroup)：设置一个触摸事件拦截的 ViewGroup ，用来将拦截事件传递到该 View 的父类 View 中去，这也是为什么 ObservableRecyclerView 类中会有 ViewGroup 类的引用的原因。</li>
+</ul>
+
+<p>总结一下 Scrollable 接口，主要完成对滚动控件回调接口的设置、增加、删除和清理的工作，还能实现滚动的功能，返回当前垂直方向上的坐标，并且对拦截事件的处理进行相关设置。</p>
+
+<h3 id="具体实现">具体实现</h3>
+
+<p>在 ObservableRecyclerView 中，这些方法分别是如何实现的？接下来让我们看一下：</p>
+
+<pre><code>@Override
+  public void setScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
+    mCallbacks = listener;
+  }
+
+  @Override
+  public void addScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
+    if (mCallbackCollection == null) {
+      mCallbackCollection = new ArrayList&lt;&gt;();
+    }
+    mCallbackCollection.add(listener);
+  }
+
+  @Override
+  public void removeScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
+    if (mCallbackCollection != null) {
+      mCallbackCollection.remove(listener);
+    }
+  }
+
+  @Override
+  public void clearScrollViewCallbacks() {
+    if (mCallbackCollection != null) {
+      mCallbackCollection.clear();
+    }
+  }
+
+  @Override
+  public void setTouchInterceptionViewGroup(ViewGroup viewGroup) {
+    mTouchInterceptionViewGroup = viewGroup;
+  }
+
+  @Override
+  public void scrollVerticallyTo(int y) {
+    View firstVisibleChild = getChildAt(0);
+    if (firstVisibleChild != null) {
+      int baseHeight = firstVisibleChild.getHeight();
+      int position = y / baseHeight;
+      scrollVerticallyToPosition(position);
+    }
+  }
+  
+  @Override
+  public int getCurrentScrollY() {
+    return mScrollY;
+  }
+</code></pre>
+
+<p>ObservableRecyclerView 持有一个 ArrayList，如果需要添加多个回调接口，则将添加的接口放入该容器中，删除和清理操作也是基于该容器的操作。注意一下  <code>scrollVerticallyTo()</code> 方法的实现，需要结合 <code>scrollVerticallyToPosition()</code> 方法一起阅读：</p>
+
+<pre><code>public void scrollVerticallyToPosition(int position) {
+    LayoutManager lm = getLayoutManager();
+
+    if (lm != null &amp;&amp; lm instanceof LinearLayoutManager) {
+      ((LinearLayoutManager) lm).scrollToPositionWithOffset(position, 0);
+    } else {
+      scrollToPosition(position);
+    }
+  }
+</code></pre>
+
+<p>其中，在 <code>scrollVerticallyToPosition()</code> 方法中，针对 LayoutManager 的类型会有一个判断，如果 LayoutManager 是 LinearLayoutManager，执行 <code>scrollToPositionWithOffset()</code> 方法，否则执行 <code>scrollToPosition()</code> 方法，完成最后的滚动操作。</p>
+
+<h2 id="observablescrollviewcallbacks">ObservableScrollViewCallbacks</h2>
+
+<h3 id="接口方法-1">接口方法</h3>
+
+<p>ObservableRecyclerView 持有 ObservableScrollViewCallbacks 的引用,该接口也是开源库所定义的接口，当使用 ObservableRecyclerView 的时候，由用户自己定义滚动时的回调函数，该接口中的方法如下：</p>
+
+<ul>
+<li>onScrollChanged(int scrollY, boolean firstScroll, boolean dragging):在滚动状态发生改变的时候调用，但是不会在第一次加载页面的时候调用，如果需要在该方法中初始化布局，需要手动去调用一下。</li>
+<li>onDownMotionEvent():手指按下的事件发生时的回调函数。</li>
+<li>onUpOrCancelMotionEvent(ScrollState scrollState):手指抬起的事件发生或者滚动事件被取消时的回调函数。</li>
+</ul>
+
+<h3 id="具体实现-1">具体实现</h3>
+
+<p>总的来说，在使用的时候，设置监听后重写回调接口中的这三个方法，已经足够实现我们所希望的滚动监听效果了。还记得最简单的那个 ActionBar 的 <code>显示/隐藏</code> 示例吗？首先，让 Activity 实现该接口：</p>
+
+<pre><code>public class ActionBarControlRecyclerViewActivity extends BaseActivity implements ObservableScrollViewCallbacks ……
+</code></pre>
+
+<p>然后我们在 onCreate 中初始化 ObservableRecyclerView，并为它设置滚动监听：</p>
+
+<pre><code>ObservableRecyclerView recyclerView = (ObservableRecyclerView) findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setScrollViewCallbacks(this);
+</code></pre>
+
+<p>设置好监听后，必须要实现以上三个方法，为了达到 ActionBar 的 <code>显示/隐藏</code> 效果，需要这样实现方法：</p>
+
+<pre><code>@Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        ActionBar ab = getSupportActionBar();
+        if (ab == null) {
+            return;
+        }
+        if (scrollState == ScrollState.UP) {
+            if (ab.isShowing()) {
+                ab.hide();
+            }
+        } else if (scrollState == ScrollState.DOWN) {
+            if (!ab.isShowing()) {
+                ab.show();
+            }
+        }
+    }
+</code></pre>
+
+<p>这样我们就完成了这个效果的实现。</p>
+
+<p>注意，由于该效果的代码是放在 <code>onUpOrCancelMotionEvent()</code> 这个方法中，当你在滑动该页面的同时，并不会出现 <code>显示/隐藏</code> 的效果，而是要在手指抬起的瞬间才会产生相应的效果，如果你希望在滚动的同时产生 <code>显示/隐藏</code> 的效果，应该将实现该效果的代码放入 <code>onScrollChanged()</code> 方法中去。</p>
+
+<h2 id="observablerecyclerview-其他重要方法">ObservableRecyclerView 其他重要方法</h2>
+
+<p>下面我们来看一下 ObservableRecyclerView 中其他的重要的方法，其中有些是重写的父类方法，有些是自己定义的方法。</p>
+
+<p>重写父类的方法有：
+- onRestoreInstanceState(Parcelable state)
+- onSaveInstanceState()
+- onScrollChanged(int l, int t, int oldl, int oldt)
+- onInterceptTouchEvent(MotionEvent ev)
+- onTouchEvent(MotionEvent ev)
+- getChildAdapterPosition(View child)
+自己的方法：
+- init()
+- dispatchOnDownMotionEvent()
+- dispatchOnScrollChanged(int scrollY, boolean firstScroll, boolean dragging)
+- dispatchOnUpOrCancelMotionEvent(ScrollState scrollState)
+- hasNoCallbacks()
+以及一个内部类：<code>SavedState</code></p>
+
+<h3 id="保存状态">保存状态</h3>
+
+<p><code>onRestoreInstanceState()</code> 和 <code>onSaveInstanceState()</code> 以及内部类 <code>SavedState</code> 完成一些临时性的状态的保存工作，需要保存的属性如下：</p>
+
+<pre><code>private int mPrevFirstVisiblePosition;
+private int mPrevFirstVisibleChildHeight = -1;
+private int mPrevScrolledChildrenHeight;
+private int mPrevScrollY;
+private int mScrollY;
+private SparseIntArray mChildrenHeights;
+</code></pre>
+
+<p>在某个时刻 Activity 因为系统回收资源的问题要被杀掉，通过 onSaveInstanceState 将有机会保存其用户界面状态，使得将来用户返回到 Activity 时能通过  onCreate(Bundle) 或者 onRestoreInstanceState(Bundle) 恢复界面的状态。</p>
+
+<h3 id="onscrollchanged">onScrollChanged</h3>
+
+<p>onScrollChanged(int l, int t, int oldl, int oldt)
+重写 View 中的方法，代码如下：</p>
+
+<pre><code>@Override
+  protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+    super.onScrollChanged(l, t, oldl, oldt);
+    if (hasNoCallbacks()) {
+      return;
+    }
+    if (getChildCount() &gt; 0) {
+      int firstVisiblePosition = getChildAdapterPosition(getChildAt(0));
+      int lastVisiblePosition = getChildAdapterPosition(getChildAt(getChildCount() - 1));
+      for (int i = firstVisiblePosition, j = 0; i &lt;= lastVisiblePosition; i++, j++) {
+        int childHeight = 0;
+        View child = getChildAt(j);
+        if (child != null) {
+          if (mChildrenHeights.indexOfKey(i) &lt; 0 || (child.getHeight() != mChildrenHeights.get(i))) {
+            childHeight = child.getHeight();
+          }
+        }
+        mChildrenHeights.put(i, childHeight);
+      }
+
+      View firstVisibleChild = getChildAt(0);
+      if (firstVisibleChild != null) {
+        if (mPrevFirstVisiblePosition &lt; firstVisiblePosition) {
+          // 向下滑动
+          int skippedChildrenHeight = 0;
+          if (firstVisiblePosition - mPrevFirstVisiblePosition != 1) {
+            for (int i = firstVisiblePosition - 1; i &gt; mPrevFirstVisiblePosition; i--) {
+              if (0 &lt; mChildrenHeights.indexOfKey(i)) {
+                skippedChildrenHeight += mChildrenHeights.get(i);
+              } else {
+                // 把每个 item 的高度近似为第一个可见子 View 的高度
+                // 这样计算也许不正确，但如果不这样做，当从底部向上滑动时scrollY会出错
+                skippedChildrenHeight += firstVisibleChild.getHeight();
+              }
+            }
+          }
+          mPrevScrolledChildrenHeight += mPrevFirstVisibleChildHeight + skippedChildrenHeight;
+          mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
+        } else if (firstVisiblePosition &lt; mPrevFirstVisiblePosition) {
+          // 向上滑动
+          int skippedChildrenHeight = 0;
+          if (mPrevFirstVisiblePosition - firstVisiblePosition != 1) {
+            for (int i = mPrevFirstVisiblePosition - 1; i &gt; firstVisiblePosition; i--) {
+              if (0 &lt; mChildrenHeights.indexOfKey(i)) {
+                skippedChildrenHeight += mChildrenHeights.get(i);
+              } else {
+                // 把每个 item 的高度近似为第一个可见子 View 的高度
+                // 这样计算也许不正确，但如果不这样做，当从底部向上滑动时 scrollY 会出错
+                skippedChildrenHeight += firstVisibleChild.getHeight();
+              }
+            }
+          }
+          mPrevScrolledChildrenHeight -= firstVisibleChild.getHeight() + skippedChildrenHeight;
+          mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
+        } else if (firstVisiblePosition == 0) {
+          mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
+          mPrevScrolledChildrenHeight = 0;
+        }
+        if (mPrevFirstVisibleChildHeight &lt; 0) {
+          mPrevFirstVisibleChildHeight = 0;
+        }
+        mScrollY = mPrevScrolledChildrenHeight - firstVisibleChild.getTop() + getPaddingTop();
+        mPrevFirstVisiblePosition = firstVisiblePosition;
+
+        dispatchOnScrollChanged(mScrollY, mFirstScroll, mDragging);
+        if (mFirstScroll) {
+          mFirstScroll = false;
+        }
+
+        if (mPrevScrollY &lt; mScrollY) {
+          //向下
+          mScrollState = ScrollState.UP;
+        } else if (mScrollY &lt; mPrevScrollY) {
+          //向上
+          mScrollState = ScrollState.DOWN;
+        } else {
+          mScrollState = ScrollState.STOP;
+        }
+        mPrevScrollY = mScrollY;
+      }
+    }
+  }
+
+</code></pre>
+
+<p>从上面的代码我们可以得知：
+1、没有设置回调的话，直接返回，不会将触摸事件进行分发；
+2、子布局的数量大于0的情况下，获取第一个子布局的位置 <code>firstVisiblePosition</code> 和最后一个子布局的位置 <code>lastVisiblePosition</code>；
+3、循环遍历所有子布局，当 SparseIntArray 容器中没有保存该子布局的高度，或者保存的值跟该子布局现在的高度不一致时，将该值存入容器中；
+4、比较 <code>mPrevFirstVisiblePosition</code> 和 <code>firstVisiblePosition</code> 的差值，判断此时的滑动方向（是 <code>UP</code> 还是 <code>DOWN</code>），分别求 <code>mPrevScrolledChildrenHeight</code> 和 <code>mPrevFirstVisibleChildHeight</code> 的大小，最终求得 <code>mScrollY</code> 的值，调用 <code>dispatchOnScrollChanged()</code>，让回调方法去实现最终的 <code>onScrollChanged()</code> 方法。</p>
+
+<h3 id="事件分发">事件分发</h3>
+
+<p><code>onInterceptTouchEvent()</code> 和 <code>onTouchEvent()</code> 重写了 ViegGroup 中的方法，前者完成对触摸事件的拦截，如果检测到手指按下，则调用方法<code>dispatchOnDownMotionEvent()</code>。在方法 <code>dispatchOnDownMotionEvent()</code>中，对事件进行处理，处理方式为：如果设置了回调，就调用回调方法中的<code>onDownMotionEvent()</code> 方法（具体是什么操作需要用户自己在使用时实现），如果存放回调接口的容器不为零，将遍历容器中的每一个接口，调用每个接口的 <code>onDownMotionEvent()</code> 方法。
+<code>onTouchEvent()</code> 方法中，如果检测到触摸事件被取消，则调用<code>dispatchOnUpOrCancelMotionEvent()</code> 方法，跟上面的<code>dispatchOnDownMotionEvent()</code>方法类似，也会调用回调方法中的<code>onUpOrCancelMotionEvent()</code> 方法，或者遍历容器。</p>
+
+<p>而当检测到触摸事件为 <code>MOVE</code> 时，情况就复杂了许多，我们看代码：</p>
+
+<pre><code>      case MotionEvent.ACTION_MOVE:
+        if (mPrevMoveEvent == null) {
+          mPrevMoveEvent = ev;
+        }
+        float diffY = ev.getY() - mPrevMoveEvent.getY();
+        mPrevMoveEvent = MotionEvent.obtainNoHistory(ev);
+        if (getCurrentScrollY() - diffY &lt;= 0) {
+
+          if (mIntercepted) {
+            return false;
+          }
+
+          final ViewGroup parent;
+          if (mTouchInterceptionViewGroup == null) {
+            parent = (ViewGroup) getParent();
+          } else {
+            parent = mTouchInterceptionViewGroup;
+          }
+
+          float offsetX = 0;
+          float offsetY = 0;
+          for (View v = this; v != null &amp;&amp; v != parent; v = (View) v.getParent()) {
+            offsetX += v.getLeft() - v.getScrollX();
+            offsetY += v.getTop() - v.getScrollY();
+          }
+          
+          final MotionEvent event = MotionEvent.obtainNoHistory(ev);
+          event.offsetLocation(offsetX, offsetY);
+
+          if (parent.onInterceptTouchEvent(event)) {
+            mIntercepted = true;
+
+            event.setAction(MotionEvent.ACTION_DOWN);
+
+            post(new Runnable() {
+              @Override
+              public void run() {
+                parent.dispatchTouchEvent(event);
+              }
+            });
+            return false;
+          }
+          return super.onTouchEvent(ev);
+        }
+        break;
+</code></pre>
+
+<p>在该方法中，<code>mTouchInterceptionViewGroup</code> 将设置好的拦截 View 赋值给 <code>parent</code>，如果没有设置，则自动赋值当前 View 的父类给 <code>parent</code>。得到 <code>parent</code> 以后，就可以完成物理坐标向逻辑坐标的转换：</p>
+
+<pre><code>event.offsetLocation(offsetX, offsetY);
+</code></pre>
+
+<p>如果父类已经将该事件拦截，则返回 false，并且启动线程调用父类的 <code>dispatchTouchEvent()</code> 方法。</p>
+
+<h3 id="getchildadapterposition-和-init">getChildAdapterPosition 和 init</h3>
+
+<p>最后，<code>getChildAdapterPosition()</code> 方法重写自 View 中的方法，根据 <code>recyclerViewLibraryVersion</code> 的值判断是调用<code>getChildAdapterPosition()</code> 还是 <code>getChildPosition()</code>，而 <code>init()</code> 方法在构造器中被调用，它新建一个SparseIntArray（比 HashMap 效率更高，可以提高性能），同时调用 <code>checkLibraryVersion()</code> 检查 RecyclerView 库的版本号。</p>
+
+<p>ObservableRecyclerView 的源码分析到这里也就差不多了，通过阅读 ObservableRecyclerView 的源码，又学到了许多的知识，尤其是巩固了之前学的不是很明白的 View 的事件拦截和事件处理这部分的内容，让我受益匪浅。</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/apidemos/expandablelistview/" title="ExpandableListView的继承关系和设计模式">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              ExpandableListView的继承关系和设计模式
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/scrollview/" title="ObservableScrollView分析 —— ObservableScrollView 源码分析">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— ObservableScrollView 源码分析
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

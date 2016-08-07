@@ -1,0 +1,1326 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blablas on ChiakiMayuzumi</title>
+    <link>http://chiakimayuzumi.github.io/blabla/</link>
+    <description>Recent content in Blablas on ChiakiMayuzumi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 09 Mar 2016 20:10:46 +0100</lastBuildDate>
+    <atom:link href="http://chiakimayuzumi.github.io/blabla/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>设计模式-工厂模式</title>
+      <link>http://chiakimayuzumi.github.io/blabla/factory/</link>
+      <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
+      
+      <guid>http://chiakimayuzumi.github.io/blabla/factory/</guid>
+      <description>
+
+&lt;p&gt;#设计模式概要&lt;/p&gt;
+
+&lt;p&gt;Apple 的 Cocoa Fundamentals Guide上有这样一句话：
+&amp;gt; Design Pattern is a solution to a problem in a context.&lt;/p&gt;
+
+&lt;p&gt;也就是说，设计模式是针对特定上下文的特定问题的解决方案，在忽略掉不重要的细节后，这种解决方案被抽象化，发现问题的一般性本质并将其模版化，找到普遍适用的解决方案从而形成了设计模式。&lt;/p&gt;
+
+&lt;p&gt;设计模式的本质是面向对象方法的实际运用。具体而言，是封装、继承、多态和关联的反复使用。通过封装、继承和多态把程序的耦合度降低；用设计模式使得程序更加灵活，在支持可维护性的同时，提高系统的可复用性。&lt;/p&gt;
+
+&lt;p&gt;设计模式主要有以下四个基本要素：&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 模式名称（pattem name）&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;一个名称用来描述模式的问题、解决方案和效果。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2. 问题（problem）&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;描述了设计模式在何种情形使用。它解释了设计模式形成的前因后果，描述了特定的设计问题。问题往往就是模式必须满足的一系列先决条件。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3. 解决方案（solution）&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;描述模式的组成成分，成分之间的相互关系以及各自的指着和协作方式。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;4. 效果（consequences）&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;效果用来描述设计模式的利弊，效果往往是我们权衡模式是否可用的重要因素。&lt;/p&gt;
+
+&lt;p&gt;一般来说，大家还同意模式包含以下的这些要素：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;力（Force）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;举例（Example）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;末态环境（Resulting Context）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;推理（Rationale）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;其他有关模式（Related Patterns）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;已知的应用（Known Uses）&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;还需要了解的是设计模式应当遵循的七大原则，包括：开-闭原则、里氏代换原则、依赖倒转原则、接口隔离原则、合成/聚合复用原则、抽象原则和迪米特法则。由于篇幅有限这里不再介绍，附上别人的博客地址：&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.sina.com.cn/s/blog_4e60b09d0101d1xc.html&#34;&gt;Java设计模式遵循的七大原则&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;最后，我们可以把设计模式类比为各种武功招式，习武都崇尚无招胜有招，码代码亦是如此，达到最高境界后只记住一句内功心法：低耦合，高内聚。相信随着对设计模式的深入了解能够更加体会到这点的玄妙之处。&lt;/p&gt;
+
+&lt;h1 id=&#34;工厂模式&#34;&gt;工厂模式&lt;/h1&gt;
+
+&lt;p&gt;工厂模式专门负责将大量有共有接口的类实例化，可以动态决定将哪个类实例化，不必事先知道每次要实例化哪一个类。该模式往往是设计模式初学者入门的模式，可以称得上为典型又最具启发效果的模式。&lt;/p&gt;
+
+&lt;p&gt;工厂模式有三种形态，分别是简单工厂（Simple Factory）模式，工厂方法（Factory Method）模式和抽象工厂（Abstract Factory）模式。下面就从上一节中提到的基本要素开始分析三种形态的工厂模式，通过对比来理解三种模式的作用和不同之处。&lt;/p&gt;
+
+&lt;h2 id=&#34;名字&#34;&gt;名字&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;简单工厂（Simple Factory）&lt;/strong&gt;：又称静态工厂方法模式（Static Factory Method Pattern），简单工厂模式是由一个工厂对象决定创建出哪一种产品类的实例。&lt;/p&gt;
+
+&lt;p&gt;简单工厂模式的工厂类一般是使用静态方法，通过接收的参数的不同来返回不同的对象实例，通常它返回的类都有一个公共的父类（或者接口对象）。&lt;/p&gt;
+
+&lt;p&gt;简单结构如图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/简单工厂模式的简单结构图.png&#34; alt=&#34;简单工厂模式的简单结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在简单工厂模式中，工厂类是整个模式的关键，其包含必要的判断逻辑，能够根据外界给定的信息，决定究竟创建哪个类的实例，外界可以不用去关注对象的创建，仅需要负责“消费”对象就可以了，明确区分了责任，有利于结构的优化。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;工厂方法（Factory Method）&lt;/strong&gt;：又称多态性工厂（Polymorphic Factory）模式或虚拟构造子（Virtual Constructor）模式。&lt;/p&gt;
+
+&lt;p&gt;它定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。&lt;/p&gt;
+
+&lt;p&gt;简单结构如图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/工厂方法模式的简单结构图.png&#34; alt=&#34;工厂方法模式的简单结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;工厂方法模式是我们在简单工厂模式的基础上再次进行抽象，为了扩展的方便和修改封闭，把一些对功能的判断不在放到一个类中，而是抽象出操作的工厂接口，各个工厂再去实现这个接口，变得更为固定，就像是机械般的。逻辑判断是在客户端通过实例化哪个具体的工厂来代替了简单工厂中工厂类中的逻辑判断。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;抽象工厂（Abstract Factory）&lt;/strong&gt;：又称工具箱（Kit 或Toolkit）模式，提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。抽象工厂和工厂方法大致相同，不同就是一簇，是一系列的产品操作。&lt;/p&gt;
+
+&lt;p&gt;简单的结构图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/抽象工厂模式的简单结构图.png&#34; alt=&#34;抽象工厂模式的简单结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;左边的等级结构代表工厂等级结构，右边的两个等级结构分别代表两个不同产品的等级结构。抽象工厂模式可以向客户端提供一个接口，使得客户端在不必指定产品的具体类型的情况下创建多个产品族中的对象，这就是抽象工厂模式的用意。&lt;/p&gt;
+
+&lt;h2 id=&#34;问题&#34;&gt;问题&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;什么时候应该使用简单工厂模式：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;如果你能预测到所有产品类的情况，建议就用简单工厂。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;什么时候应该使用工厂方法模式：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;客户端不知道它要创建的具体是哪一个子类。&lt;/li&gt;
+&lt;li&gt;一个类想要由自己的子类来定义某对象的创建过程。&lt;/li&gt;
+&lt;li&gt;类将创建某对象的职责代理给一些帮助子类中的一个，并且你想要将哪一个子类作为代理的信息进行局部化。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;什么时候应该使用工厂方法模式：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;多个抽象产品类，每个抽象产品类可以派生出多个具体产品类。&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;一个抽象工厂类，可以派生出多个具体工厂类。&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;每个具体工厂类可以创建多个具体产品类的实例。&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;区别：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;简单工厂的工厂类方法都是静态的。&lt;/li&gt;
+&lt;li&gt;简单工厂侧重于创建对象的代码复用，或者已创建实例的复用，或者创建实例的统一性；而工厂方法侧重于子类自己特定创建逻辑的实现&lt;/li&gt;
+&lt;li&gt;简单工厂模式中的工厂类是为产品类实例化的核心，而工厂方法模式把初始化工作交给子类实现。&lt;/li&gt;
+&lt;li&gt;工厂方法模式只有一个抽象产品类，而抽象工厂模式有多个。&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;工厂方法模式的具体工厂类只能创建一个具体产品类的实例，而抽象工厂模式可以创建多个。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;解决方案&#34;&gt;解决方案&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;简单工厂模式的结构：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/简单工厂模式结构图.png&#34; alt=&#34;简单工厂模式结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;工厂类（Creator）角色：&lt;/strong&gt;工厂方法的核心，在客户端的直接调用下创建产品对象。（具体java类）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;抽象产品（Product）角色：&lt;/strong&gt;工厂方法模式创建的对象的父类或者它们拥有共同的接口。（Java接口或Java抽象类）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;具体产品（Concrete Product）角色：&lt;/strong&gt;工厂方法模式创建的任何对象都是这个角色的实例。（具体Java类）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;工厂方法模式的结构：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/工厂方法模式结构图.png&#34; alt=&#34;工厂方法模式结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;抽象工厂（Creator）角色：&lt;/strong&gt;工厂方法的核心，与应用程序无关。任何在模式中创对象的工厂类必须实现这个接口。（Java接口或抽象Java类）
+-** 具体工厂（Concrete Creator）角色：**实现了抽象工厂接口的具体java类，与应用有密切关联，并受到应用程序的调用来创建产品对象。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;抽象产品（Product）角色：&lt;/strong&gt;同简单工厂。（Java接口或抽象Java类）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;具体产品（Concrete Product）角色：&lt;/strong&gt;同简单工厂。（具体Java类）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;抽象工厂模式的结构：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/抽象工厂模式结构图.png&#34; alt=&#34;抽象工厂模式结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;抽象工厂（Abstract Factory）角色：&lt;/strong&gt;同工厂方法。（java接口抽象java）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;具体工厂（Concrete Factory）角色：&lt;/strong&gt;同工厂方法。（具体java类）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;抽象产品（Abstract Product）角色：&lt;/strong&gt;同工厂方法。（java接口抽象java）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;具体产品类（Concrete Product）角色：&lt;/strong&gt;同工厂方法。（具体java类）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;效果&#34;&gt;效果&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;简单工厂优点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;让对象的调用者和对象创建过程分离，当对象调用者需要对象时，直接向工厂请求，从而避免了对象的调用者与对象的实现类以硬编码方式耦合，以提高系统的可维护性、可扩展性；设计简单，产品类的等级结构不会反映到工厂类中来，产品类的等级结构变化不会影响工厂类。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;简单工厂缺点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;体现在其工厂类上，该类集中了所有实例的创建逻辑，违反了高内聚的责任分配原则，当系统的具体产品类不断增多时，工厂类中条件判断过多，不利于扩展及维护，没有遵守开放—封闭原则。如果将来需要产品类，那么，在简单工厂模式中，就必须在简单工厂类中添加相应的判断语句，必然导致工厂类的修改。不修改代码的话，是无法扩展的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;工厂方法的优点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;简单工厂模式的缺点，利用工厂方法模式可以得到一定的克服。在简单工厂模式的基础上再次进行抽象，为了扩展的方便和修改封闭，把一些对功能的判断不在放到一个类中，而是抽象出操作的工厂接口，各个工厂再去实现这个接口。它遵循了“开放—封闭”原则。在同一等级结构中，支持增加任意产品。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;工厂方法的缺点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;把简单工厂的内部逻辑判断转移到了客户端代码来执行；每增加一产品就要增加一个产品工厂的类，增加了额外的开发量。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;抽象工厂的优点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;抽象工厂是应对产品族概念的。应对产品族概念而生，增加新的产品线很容易，抽象工厂模式隔离了具体类的生产，使得客户并不需要知道什么被创建，当一个产品族中的多个对象被设计成一起工作时，它能保证客户端始终只使用同一个产品族中的对象。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;抽象工厂的缺点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;增加新的产品等级结构很复杂，需要修改抽象工厂和所有的具体工厂类，对“开闭原则”的支持呈现倾斜性。&lt;/p&gt;
+
+&lt;p&gt;以上三种工厂方法在等级结构和产品族这两个方向上的支持程度不同，所以要根据情况考虑应该使用哪种方法。&lt;/p&gt;
+
+&lt;h2 id=&#34;示例&#34;&gt;示例&lt;/h2&gt;
+
+&lt;p&gt;例子是我自己写的一个自动贩售饮料机的简单实现。&lt;/p&gt;
+
+&lt;p&gt;在简单工厂模式下，创建一个DrinkFactory，通过它来产生我所需要的饮料：可乐，雪碧和芬达。&lt;/p&gt;
+
+&lt;p&gt;饮料接口Drink：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * 饮品接口
+   * @author chiakimayuzumi
+   *
+   */
+  public interface Drink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * kind 方法 表明口味
+ */
+ public void kind();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;具体可乐类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * 可乐
+   * @author chiakimayuzumi
+   *
+   */
+   public class Cola implements Drink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public void kind() {
+  System.out.println(&amp;quot;I Love Cola&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;具体雪碧类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * 雪碧
+   * @author chiakimayuzumi
+   *
+   */
+  public class Sprite implements Drink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public void kind() {
+  System.out.println(&amp;quot;I Love Sprite&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;具体芬达类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * 芬达
+   * @author chiakimayuzumi
+   *
+   */
+   public class Fanta implements Drink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public void kind() {
+  System.out.println(&amp;quot;I Love Fanta&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;工厂类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * 工厂类
+   * @author chiakimayuzumi
+   *
+   */
+  public class DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public static Drink produceDrink(String kind){
+
+    Drink drink = null;
+    if(kind.equals(&amp;quot;Cola&amp;quot;)){
+      drink = new Cola();           
+    }else if(kind.equals(&amp;quot;Sprite&amp;quot;)){
+      drink = new Sprite();
+    }else if(kind.equals(&amp;quot;Fanta&amp;quot;)){
+      drink = new Fanta();
+    }else {
+      throw new IllegalArgumentException(&amp;quot;No such kind&amp;quot;);
+    }
+    return drink;
+
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;客户端调用：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * 客户端调用
+   * @author chiakimayuzumi
+   *
+   */
+  public class Console {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public static void main(String[] args) {  
+
+      Drink  drink1 = DrinkFactory.produceDrink(&amp;quot;Cola&amp;quot;);  
+      drink1.kind();  
+
+      Drink  drink2 = DrinkFactory.produceDrink(&amp;quot;Sprite&amp;quot;);  
+      drink2.kind();  
+
+      Drink  drink3 = DrinkFactory.produceDrink(&amp;quot;Fanta&amp;quot;);  
+      drink3.kind();  
+
+      Drink  drink4 = DrinkFactory.produceDrink(&amp;quot;Coffee&amp;quot;);  
+      drink4.kind();  
+
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;最终结果：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/简单工厂示例结果.png&#34; alt=&#34;简单工厂示例结果&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;最后抛出错误是因为客户端调用了没有的饮品类型咖啡。&lt;/p&gt;
+
+&lt;p&gt;随后，有消费者反映，希望能够买到咖啡。通过观察上述代码我们可以发现，如果需要实现这个功能，必须修改DrinkFactory中的代码。这样就违背了开闭原则。如果我们用工厂方法模式实现这个自动贩售饮料机呢？&lt;/p&gt;
+
+&lt;p&gt;一个抽象的工厂类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public abstract class DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  protected abstract Drink produceDrink();  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;可乐工厂类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class ColaFactory extends DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  @Override  
+  protected Drink produceDrink() {  
+
+      return new Cola();  
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;雪碧工厂类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class SpriteFactory extends DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  @Override  
+  protected Drink produceDrink() {  
+
+      return new Sprite();  
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;br /&gt;
+芬达工厂类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class FantaFactory extends DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  @Override  
+  protected Drink produceDrink() {  
+
+      return new Fanta();  
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;最后在客户端调用即可，如果需要增加咖啡，只需要增加具体的咖啡类和咖啡工厂类即可。&lt;/p&gt;
+
+&lt;p&gt;咖啡类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   * Coffee
+   * @author chiakimayuzumi
+   *
+   */
+   public class Coffee implements Drink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public void kind() {
+  System.out.println(&amp;quot;I Love Coffee&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;咖啡工厂类：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class CoffeeFactory extends DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  @Override  
+  protected Drink produceDrink() {  
+
+      return new Coffee();  
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;然后调用：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class Console {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public static void main(String[] args) {  
+
+  Drink d1 = new ColaFactory().produceDrink();
+  d1.kind();
+
+  Drink d2 = new SpriteFactory().produceDrink();
+  d2.kind();
+
+  Drink d3 = new FantaFactory().produceDrink();
+  d3.kind();
+
+  Drink d4 = new CoffeeFactory().produceDrink();
+  d4.kind();
+
+
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/工厂方法示例结果.png&#34; alt=&#34;工厂方法示例结果&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;完成这一步后，又有消费者反应，冬天的时候，最好能喝到热的饮料。如果要满足这样的需求，我们需要再增加的是热可乐的具体类，热雪碧的具体类，热芬达的具体类，热咖啡的具体类，热可乐工厂，热雪碧工厂，热芬达工厂，热咖啡工厂。如此繁多的类看起来是不是非常的麻烦呢。如果我们一开始就知道我们的贩售机需要提供两种类型的饮品，也就是不同的产品族，就应该用抽象工厂的模式来写代码。&lt;/p&gt;
+
+&lt;p&gt;首先实现两个接口，一个HotDrink：&lt;/p&gt;
+
+&lt;p&gt;/**&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;@author chiakimayuzumi&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;*/&lt;br /&gt;
+public interface HotDrink {&lt;/p&gt;
+
+&lt;p&gt;public void kind();&lt;br /&gt;
+}&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;一个ColdDrink：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public interface ColdDrink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public void kind();  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;然后分别让四种具体产品继承并实现，这里只贴上可乐类的代码：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */
+   public class ColdCola implements ColdDrink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public void kind() {
+  System.out.println(&amp;quot;I Love ColdCola&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */
+   public class HotCola implements HotDrink {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Override
+public void kind() {
+  System.out.println(&amp;quot;I Love HotCola&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;然后实现所有饮品的工厂类，这里只贴可乐工厂的代码：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class ColaFactory extends DrinkFactory {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  @Override  
+  public HotDrink produceHotDrink() {  
+
+      return new HotCola();  
+  }  
+
+  @Override  
+  public ColdDrink produceColdDrink() {  
+
+      return new ColdCola();  
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;最后客户端调用：&lt;/p&gt;
+
+&lt;p&gt;/**
+   *
+   * @author chiakimayuzumi
+   *
+   */&lt;br /&gt;
+  public class Console {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public static void main(String[] args) {  
+
+  DrinkFactory colaFactory = new ColaFactory();
+  HotDrink hotCola = colaFactory.produceHotDrink();
+  ColdDrink coldCola = colaFactory.produceColdDrink();
+
+  hotCola.kind();
+  coldCola.kind();
+
+  DrinkFactory spriteFactory = new SpriteFactory();
+  HotDrink hotSprite = spriteFactory.produceHotDrink();
+  ColdDrink coldSprite = spriteFactory.produceColdDrink();
+
+  hotSprite.kind();
+  coldSprite.kind();
+
+  DrinkFactory fantaFactory = new FantaFactory();
+  HotDrink hotFanta = fantaFactory.produceHotDrink();
+  ColdDrink coldFanta = fantaFactory.produceColdDrink();
+
+  hotFanta.kind();
+  coldFanta.kind();
+
+  DrinkFactory coffeeFactory = new CoffeeFactory();
+  HotDrink hotCoffee = coffeeFactory.produceHotDrink();
+  ColdDrink coldCoffee = coffeeFactory.produceColdDrink();
+
+  hotCoffee.kind();
+  coldCoffee.kind();
+
+
+
+}  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;输出结果：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/02/抽象工厂示例结果.png&#34; alt=&#34;抽象工厂示例结果&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;已知的应用&#34;&gt;已知的应用&lt;/h2&gt;
+
+&lt;p&gt;在ApiDemos中，我找到了一个有关简单工厂的简单应用，该应用主要位于graphics文件夹下，在一些处理图像的有关类中可以看到简单工厂的影子。主要是应用BitmapFactory类中的不同的静态方法多次生成满足需要的Bitmap类。&lt;/p&gt;
+
+&lt;p&gt;例如：
+AlphaBitmap类中：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;InputStream is = context.getResources().openRawResource(R.drawable.app_sample_code);
+mBitmap = BitmapFactory.decodeStream(is);
+mBitmap2 = mBitmap.extractAlpha();
+mBitmap3 = Bitmap.createBitmap(200, 200, Bitmap.Config.ALPHA_8);
+drawIntoBitmap(mBitmap3);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;BitmapDecode类中：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;BitmapFactory.Options opts = new  BitmapFactory.Options();
+Bitmap bm;
+
+opts.inJustDecodeBounds = true;
+bm = BitmapFactory.decodeStream(is, null, opts);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DensityActivity类中：&lt;/p&gt;
+
+&lt;p&gt;private Bitmap loadAndPrintDpi(int id, boolean scale) {
+          Bitmap bitmap;
+          if (scale) {
+              bitmap = BitmapFactory.decodeResource(getResources(), id);
+          } else {
+              BitmapFactory.Options opts = new BitmapFactory.Options();
+              opts.inScaled = false;
+              bitmap = BitmapFactory.decodeResource(getResources(), id, opts);
+          }
+          return bitmap;
+      }&lt;/p&gt;
+
+&lt;p&gt;很遗憾在ApiDemos中我暂时没有找到工厂方法和抽象工厂的应用，如果以后找到了其他的示例我会补充在这里。&lt;/p&gt;
+
+&lt;h1 id=&#34;最后&#34;&gt;最后&lt;/h1&gt;
+
+&lt;p&gt;这里用来记录每一次文章修改之处和补充之处。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>设计模式-组合模式</title>
+      <link>http://chiakimayuzumi.github.io/blabla/composite/</link>
+      <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
+      
+      <guid>http://chiakimayuzumi.github.io/blabla/composite/</guid>
+      <description>&lt;p&gt;#模式名称（pattem name）&lt;/p&gt;
+
+&lt;p&gt;组合(Composite)模式的其它翻译名称也很多，比如合成模式、树模式等等。在《设计模式》一书中给出的定义是：
+&amp;gt; 将对象以树形结构组织起来，以达成“部分－整体”的层次结构，使得客户端对单个对象和组合对象的使用具有一致性。&lt;/p&gt;
+
+&lt;p&gt;#问题（problem）&lt;/p&gt;
+
+&lt;p&gt;以下情况下适用组合模式：&lt;/p&gt;
+
+&lt;p&gt;你想表示对象的部分-整体层次结构；你希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。&lt;/p&gt;
+
+&lt;p&gt;它使我们树型结构的问题中，模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。&lt;/p&gt;
+
+&lt;p&gt;组合模式让你可以优化处理递归或分级数据结构。&lt;/p&gt;
+
+&lt;p&gt;#解决方案（solution）&lt;/p&gt;
+
+&lt;p&gt;在我们学习组合模式（Composite）之前，让我们先讲解一下透明方式和安全方式。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/透明模式结构图.jpg&#34; alt=&#34;透明模式结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;透明方式&lt;/strong&gt;：在Component中声明所有用来管理子对象的方法，如Add()方法，Remove()方法及GetChild()方法，所有实现Component接口的子类都具备这些方法，这使得Component和子类具备一致的行为接口，使得对客户端无需区别树叶和树枝对象。&lt;/p&gt;
+
+&lt;p&gt;正由于我们的Composite和Leaf都具备一致的接口行为，但我们知道Leaf不应该具有Add()，Remove()及GetChild()方法，因为我们叶子节点不能再添加和移除节点了。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/安全模式结构图.jpg&#34; alt=&#34;安全模式结构图&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;安全模式&lt;/strong&gt;：在透明模式基础上把Component中声明所有用来管理子对象的方法移到Composite中，在Composite实现子对象的管理方法，那么Leaf就没有子对象管理方法，这使得Composite和Leaf的行为接口不一致，所以客户端在调用时要知道树叶和树枝对象存在。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;基本结构如下：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;抽象构件（Component）：定义参加组合的对象的共有方法和属性，可以定义一些默认的行为或属性。&lt;/p&gt;
+
+&lt;p&gt;叶子构件（Leaf）：叶子对象，其下没有分支。&lt;/p&gt;
+
+&lt;p&gt;树枝构件（Composit）：树枝对象，它的作用是组合树枝节点和叶子节点。&lt;/p&gt;
+
+&lt;p&gt;#效果（consequences）&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;组合模式的优点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;高层模块调用简单；一棵树形机构中的所有节点都是Component，局部和整体对调用者来说没有任何区别，也就是说，高层模块不必关心自己处理的是单个对象还是整个组合结构，简化了高层模块的代码。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;节点自由增加；使用了组合模式后，我们可以看看，如果想增加一个树枝节点、树叶节点是不是都很容易呀，只要找到它的父节点就成，非常容易扩展，符合开闭原则，对以后的维护非常有利。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;组合模式的缺点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使用组合模式后，控制树枝构件的类型不太容易。&lt;/li&gt;
+&lt;li&gt;用继承的方法来增加新的行为很困难。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;组合模式的应用：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;维护和展示部分－整体关系的场景，如树形菜单、文件和文件夹管理等能
+从一个整体中能够独立出部分模块或功能的场景。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;组合模式的注意事项：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;只要是树形结构，就要考虑使用组合模式，这个一定要记住，只要是要体现局部和整体的关系的时候，而且这种关系还可能比较深，考虑一下组合模式吧。&lt;/p&gt;
+
+&lt;p&gt;#示例&lt;/p&gt;
+
+&lt;p&gt;下面分别用两种方法实现公司的树形结构。&lt;/p&gt;
+
+&lt;p&gt;安全模式下的代码：&lt;/p&gt;
+
+&lt;p&gt;抽象构件（Component）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;public abstract class Company {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private String name;
+
+public Company(String name) {
+  this.name = name;
+}
+
+public Company() {
+}
+
+public String getName() {
+  return name;
+}
+
+public void setName(String name) {
+  this.name = name;
+}
+
+protected abstract void display(int depth);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;树枝构件（Composit）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;import java.util.ArrayList;
+  import java.util.List;&lt;/p&gt;
+
+&lt;p&gt;public class ConcreteCompany extends Company {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; private List&amp;lt;Company&amp;gt; cList;  
+
+ public ConcreteCompany() {
+  cList = new ArrayList&amp;lt;Company&amp;gt;();
+ }
+
+ public ConcreteCompany(String name) {
+  super(name);
+  cList = new ArrayList&amp;lt;Company&amp;gt;();
+
+ }
+
+ public void add(Company company) {
+  cList.add(company);
+ }
+
+ @Override
+ protected void display(int depth) {
+  StringBuilder sb = new StringBuilder(&amp;quot;&amp;quot;);
+  for (int i =0;i&amp;lt;depth ;i++ ) 
+  {
+    sb.append(&amp;quot;-&amp;quot;);
+  }
+ System.out.println(new String(sb) + this.getName());
+ for (Company c : cList) {
+  c.display(depth + 2);
+  }
+
+ }
+
+ public void remove(Company company) {
+  cList.remove(company);
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;叶子构件（Leaf）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;public class FinanceDepartment extends Company {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public FinanceDepartment(){  
+
+  }  
+
+  public FinanceDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&amp;quot;&amp;quot;);  
+      for (int i = 0; i &amp;lt; depth; i++) {  
+          sb.append(&amp;quot;-&amp;quot;);  
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;另一个叶子构件（Leaf）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;public class HRDepartment extends Company {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public HRDepartment(){  
+
+  }  
+
+  public HRDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&amp;quot;&amp;quot;);  
+      for (int i = 0; i &amp;lt; depth; i++) {  
+          sb.append(&amp;quot;-&amp;quot;);   
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;透明模式下的代码：&lt;/p&gt;
+
+&lt;p&gt;抽象构件（Component）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;public abstract class Company
+  {
+    private String name;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public Company(String name) {
+  this.name = name;
+}
+
+public Company() {
+}
+
+public String getName() {
+  return name;
+}
+
+public void setName(String name) {
+  this.name = name;
+}
+
+protected abstract void add(Company company);
+
+protected abstract void remove(Company company);
+
+protected abstract void display(int depth);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;树枝构件（Composit）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;import java.util.ArrayList;
+  import java.util.List;&lt;/p&gt;
+
+&lt;p&gt;public class ConcreteCompany extends Company {&lt;br /&gt;
+     private List&lt;Company&gt; cList;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; public ConcreteCompany() {
+  cList = new ArrayList&amp;lt;Company&amp;gt;();
+ }
+
+ public ConcreteCompany(String name) {
+  super(name);
+  cList = new ArrayList&amp;lt;Company&amp;gt;();
+
+ }
+
+ @Override
+ public void add(Company company) {
+  cList.add(company);
+ }
+
+ @Override
+ protected void display(int depth) {
+  StringBuilder sb = new StringBuilder(&amp;quot;&amp;quot;);
+  for (int i =0;i&amp;lt;depth ;i++ ) 
+  {
+    sb.append(&amp;quot;-&amp;quot;);
+  }
+ System.out.println(new String(sb) + this.getName());
+ for (Company c : cList) {
+  c.display(depth + 2);
+  }
+
+ }
+
+ @Override
+ protected void remove(Company company) {
+  cList.remove(company);
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;叶子构件（Leaf）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;public class FinanceDepartment extends Company {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public FinanceDepartment(){  
+
+  }  
+
+  public FinanceDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void add(Company company) {  
+
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&amp;quot;&amp;quot;);  
+      for (int i = 0; i &amp;lt; depth; i++) {  
+          sb.append(&amp;quot;-&amp;quot;);  
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+
+  @Override  
+  protected void remove(Company company) {  
+
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;另一个叶子构件（Leaf）类：&lt;/p&gt;
+
+&lt;p&gt;package com.test.company;&lt;/p&gt;
+
+&lt;p&gt;public class HRDepartment extends Company {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public HRDepartment(){  
+
+  }  
+
+  public HRDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void add(Company company) {  
+
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&amp;quot;&amp;quot;);  
+      for (int i = 0; i &amp;lt; depth; i++) {  
+          sb.append(&amp;quot;-&amp;quot;);   
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+
+  @Override  
+  protected void remove(Company company) {  
+
+  }  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;运行客户端，均能得到以下结果：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/结果.png&#34; alt=&#34;结果&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;#Android源码中的应用&lt;/p&gt;
+
+&lt;p&gt;在Android源码中，都能找到使用组合模式的例子，其中ViewGroup和View的结构就是非常典型的组合模式，结构图如下所示：&lt;/p&gt;
+
+&lt;p&gt;现在来看看它们是如何利用组合模式组织在一起的，首先在View类定义了有关具体操作，然后在ViewGroup类中继承View类，并添加相关的增加、删除和查找孩子View节点，代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public abstract class ViewGroup extends View implements ViewParent, ViewManager {
+  ……
+｝
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;接着看增加addView方法：&lt;/p&gt;
+
+&lt;p&gt;/**
+       * Adds a child view. If no layout parameters are already set on the child, the
+       * default parameters for this ViewGroup are set on the child.
+       *
+       * @param child the child view to add
+       *
+       * @see #generateDefaultLayoutParams()
+       */
+      public void addView(View child) {
+          addView(child, -1);
+      }&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; ……
+  public void addView(View child, int index) {
+      LayoutParams params = child.getLayoutParams();
+      if (params == null) {
+          params = generateDefaultLayoutParams();
+          if (params == null) {
+              throw new IllegalArgumentException(&amp;quot;generateDefaultLayoutParams() cannot return null&amp;quot;);
+          }
+      }
+      addView(child, index, params);
+  }
+
+……
+  public void addView(View child, int width, int height) {
+      final LayoutParams params = generateDefaultLayoutParams();
+      params.width = width;
+      params.height = height;
+      addView(child, -1, params);
+  }
+
+ ……
+  public void addView(View child, LayoutParams params) {
+      addView(child, -1, params);
+  }
+
+  ……
+  public void addView(View child, int index, LayoutParams params) {
+      if (DBG) {
+          System.out.println(this + &amp;quot; addView&amp;quot;);
+      }
+
+      // addViewInner() will call child.requestLayout() when setting the new LayoutParams
+      // therefore, we call requestLayout() on ourselves before, so that the child&#39;s request
+      // will be blocked at our level
+      requestLayout();
+      invalidate(true);
+      addViewInner(child, index, params, false);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;也有removeView方法：&lt;/p&gt;
+
+&lt;p&gt;public void removeView(View view) {
+          removeViewInternal(view);
+          requestLayout();
+          invalidate(true);
+      }&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; ……
+  public void removeViewInLayout(View view) {
+      removeViewInternal(view);
+  }
+
+ ……
+  public void removeViewsInLayout(int start, int count) {
+      removeViewsInternal(start, count);
+  }
+
+ ……
+  public void removeViewAt(int index) {
+      removeViewInternal(index, getChildAt(index));
+      requestLayout();
+      invalidate(true);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;……
+      public void removeViews(int start, int count) {
+          removeViewsInternal(start, count);
+          requestLayout();
+          invalidate(true);
+      }&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private void removeViewInternal(View view) {
+      final int index = indexOfChild(view);
+      if (index &amp;gt;= 0) {
+          removeViewInternal(index, view);
+      }
+  }
+
+  private void removeViewInternal(int index, View view) {
+
+      if (mTransition != null) {
+          mTransition.removeChild(this, view);
+      }
+
+      boolean clearChildFocus = false;
+      if (view == mFocused) {
+          view.clearFocusForRemoval();
+          clearChildFocus = true;
+      }
+
+      if (view.getAnimation() != null ||
+              (mTransitioningViews != null &amp;amp;&amp;amp; mTransitioningViews.contains(view))) {
+          addDisappearingView(view);
+      } else if (view.mAttachInfo != null) {
+         view.dispatchDetachedFromWindow();
+      }
+
+      onViewRemoved(view);
+
+      needGlobalAttributesUpdate(false);
+
+      removeFromArray(index);
+
+      if (clearChildFocus) {
+          clearChildFocus(view);
+      }
+  }
+
+ ……
+
+  private void removeViewsInternal(int start, int count) {
+      final View focused = mFocused;
+      final boolean detach = mAttachInfo != null;
+      View clearChildFocus = null;
+
+      final View[] children = mChildren;
+      final int end = start + count;
+
+      for (int i = start; i &amp;lt; end; i++) {
+          final View view = children[i];
+
+          if (mTransition != null) {
+              mTransition.removeChild(this, view);
+          }
+
+          if (view == focused) {
+              view.clearFocusForRemoval();
+              clearChildFocus = view;
+          }
+
+          if (view.getAnimation() != null ||
+              (mTransitioningViews != null &amp;amp;&amp;amp; mTransitioningViews.contains(view))) {
+              addDisappearingView(view);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;} else if (detach) {
+                 view.dispatchDetachedFromWindow();
+              }&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;          needGlobalAttributesUpdate(false);
+
+          onViewRemoved(view);
+      }
+
+      removeFromArray(start, count);
+
+      if (clearChildFocus != null) {
+          clearChildFocus(clearChildFocus);
+      }
+  }
+
+
+  public void removeAllViews() {
+      removeAllViewsInLayout();
+      requestLayout();
+      invalidate(true);
+  }
+
+……
+  public void removeAllViewsInLayout() {
+      final int count = mChildrenCount;
+      if (count &amp;lt;= 0) {
+          return;
+      }
+
+      final View[] children = mChildren;
+      mChildrenCount = 0;
+
+      final View focused = mFocused;
+      final boolean detach = mAttachInfo != null;
+      View clearChildFocus = null;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;needGlobalAttributesUpdate(false);&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;      for (int i = count - 1; i &amp;gt;= 0; i--) {
+          final View view = children[i];
+
+          if (mTransition != null) {
+              mTransition.removeChild(this, view);
+          }
+
+          if (view == focused) {
+              view.clearFocusForRemoval();
+              clearChildFocus = view;
+          }
+
+          if (view.getAnimation() != null ||
+                  (mTransitioningViews != null &amp;amp;&amp;amp; mTransitioningViews.contains(view))) {
+              addDisappearingView(view);
+          } else if (detach) {
+             view.dispatchDetachedFromWindow();
+          }
+
+          onViewRemoved(view);
+
+          view.mParent = null;
+          children[i] = null;
+      }
+
+      if (clearChildFocus != null) {
+          clearChildFocus(clearChildFocus);
+      }
+  }
+
+ ……
+  protected void removeDetachedView(View child, boolean animate) {
+      if (mTransition != null) {
+          mTransition.removeChild(this, child);
+      }
+
+      if (child == mFocused) {
+          child.clearFocus();
+      }
+
+      if ((animate &amp;amp;&amp;amp; child.getAnimation() != null) ||
+              (mTransitioningViews != null &amp;amp;&amp;amp; mTransitioningViews.contains(child))) {
+          addDisappearingView(child);
+      } else if (child.mAttachInfo != null) {
+          child.dispatchDetachedFromWindow();
+      }
+
+      onViewRemoved(child);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;也有getChild方法：&lt;/p&gt;
+
+&lt;p&gt;/**
+       * Returns the view at the specified position in the group.
+       *
+       * @param index the position at which to get the view from
+       * @return the view at the specified position or null if the position
+       *         does not exist within the group
+       */
+      public View getChildAt(int index) {
+          if (index &amp;lt; 0 || index &amp;gt;= mChildrenCount) {
+              return null;
+          }
+          return mChildren[index];
+      }&lt;/p&gt;
+
+&lt;p&gt;具体叶子节点，如Button，它是继承TextView的，TextView是继承View的，代码如下：&lt;/p&gt;
+
+&lt;p&gt;public class TextView extends View implements ViewTreeObserver.OnPreDrawListener {
+  ……
+  }&lt;/p&gt;
+
+&lt;p&gt;其中使用（继承）到ViewGroup类的有我们常用的容器类（包装和容纳各种View），如LinearLayout、FrameLayout等，代码如下：&lt;/p&gt;
+
+&lt;p&gt;public class LinearLayout extends ViewGroup {
+      public static final int HORIZONTAL = 0;
+      public static final int VERTICAL = 1;
+  ……
+  }&lt;/p&gt;
+
+&lt;p&gt;public class FrameLayout extends ViewGroup {
+  ……
+  }&lt;/p&gt;
+
+&lt;p&gt;public class RelativeLayout extends ViewGroup {
+      private static final String LOG_TAG = &amp;ldquo;RelativeLayout&amp;rdquo;;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private static final boolean DEBUG_GRAPH = false;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;……
+  }&lt;/p&gt;
+
+&lt;p&gt;public class AbsoluteLayout extends ViewGroup {
+      public AbsoluteLayout(Context context) {
+          super(context);
+      }
+  }
+  ……&lt;/p&gt;
+
+&lt;p&gt;#总结&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;组合模式（Composite）采用树形层次结构来实现，只要是要体现局部和整体的关系的时候，而且这种关系还可能比较深，考虑一下组合模式。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;组合模式（Composite）中，透明方式和安全方式的使用抉择，虽然透明方式有可能违背面向对象的SRP原则（单一职责），而安全方式没有很好的封装变化，但在实际开发时我们要根据具体的情况权衡利弊。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

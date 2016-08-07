@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Others on ChiakiMayuzumi</title>
+    <link>http://chiakimayuzumi.github.io/others/</link>
+    <description>Recent content in Others on ChiakiMayuzumi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 09 Mar 2016 20:10:46 +0100</lastBuildDate>
+    <atom:link href="http://chiakimayuzumi.github.io/others/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>setupWithViewPager()后到底发生了什么？</title>
+      <link>http://chiakimayuzumi.github.io/others/setupwithviewpager/</link>
+      <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
+      
+      <guid>http://chiakimayuzumi.github.io/others/setupwithviewpager/</guid>
+      <description>
+
+&lt;p&gt;相信使用过 TabLayout 和 ViewPager 的人对这个方法一定不陌生了，当我们为 ViewPager 设置好 adapter 后，需要调用 TabLayout 的 &lt;code&gt;setupWithViewPager&lt;/code&gt; 方法将 ViewPager 的引用传递进去：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mViewPager.setAdapter(mAdapter);
+mTabLayout.setupWithViewPager(mViewPager);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;那么接下来问题来了，为什么 &lt;code&gt;setupWithViewPager&lt;/code&gt; 之后，ViewPager 和 TabLayout 就能关联起来呢？并且 ViewPager 设置的 adapter 中的 &lt;code&gt;PageTitle&lt;/code&gt;数据就能正确反应到每一个 Tab 中去呢？为了搞明白这些背后的操作，我认为我们有必要去查看方法 &lt;code&gt;setupWithViewPager&lt;/code&gt; 的源代码。&lt;/p&gt;
+
+&lt;h1 id=&#34;分析-setupwithviewpager-的原理&#34;&gt;分析 setupWithViewPager() 的原理&lt;/h1&gt;
+
+&lt;h2 id=&#34;方法源码&#34;&gt;方法源码&lt;/h2&gt;
+
+&lt;p&gt;方法如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public void setupWithViewPager(@Nullable final ViewPager viewPager) {
+    if (mViewPager != null &amp;amp;&amp;amp; mPageChangeListener != null) {
+      mViewPager.removeOnPageChangeListener(mPageChangeListener);
+    }
+    if (viewPager != null) {
+      final PagerAdapter adapter = viewPager.getAdapter();
+      if (adapter == null) {
+        throw new IllegalArgumentException(&amp;quot;ViewPager does not have a PagerAdapter set&amp;quot;);
+      }
+      mViewPager = viewPager;
+
+      if (mPageChangeListener == null) {
+        mPageChangeListener = new TabLayoutOnPageChangeListener(this);
+      }
+      mPageChangeListener.reset();
+      viewPager.addOnPageChangeListener(mPageChangeListener);
+
+      setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager));
+
+      setPagerAdapter(adapter, true);
+    } else {
+
+      mViewPager = null;
+      setOnTabSelectedListener(null);
+      setPagerAdapter(null, true);
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先看第一部分：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  if (mViewPager != null &amp;amp;&amp;amp; mPageChangeListener != null) {
+      mViewPager.removeOnPageChangeListener(mPageChangeListener);
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果已经设置过 ViewPager 了，并且也设置了PageChangeListener，则将它移除。&lt;/p&gt;
+
+&lt;p&gt;再来第二部分：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  else {
+    mViewPager = null;
+    setOnTabSelectedListener(null);
+    setPagerAdapter(null, true);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果传入了一个空的 ViewPager，就将 ViewPager，OnTabSelectedListener和PagerAdapter都设置为空。&lt;/p&gt;
+
+&lt;p&gt;然后是第三部分：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    if (viewPager != null) {
+      final PagerAdapter adapter = viewPager.getAdapter();
+      if (adapter == null) {
+        throw new IllegalArgumentException(&amp;quot;ViewPager does not have a PagerAdapter set&amp;quot;);
+      }
+      mViewPager = viewPager;
+
+      if (mPageChangeListener == null) {
+        mPageChangeListener = new TabLayoutOnPageChangeListener(this);
+      }
+      mPageChangeListener.reset();
+      viewPager.addOnPageChangeListener(mPageChangeListener);
+
+      setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager));
+
+      setPagerAdapter(adapter, true);
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果 ViewPager 不为空，则将它赋值给 PagerAdapter 类型的引用 mViewPager。ViewPager 的 adapter 类型继承自 FragmentPagerAdapter，FragmentPagerAdapter 则是继承自 PagerAdapter，所以这样赋值是没有问题的。当adapter 为 &lt;code&gt;null&lt;/code&gt; 抛出异常。&lt;/p&gt;
+
+&lt;p&gt;将这个传入的 ViewPager 引用赋值给类私有变量 mViewPager；
+如果 TabLayoutOnPageChangeListener 为空，则新建一个 TabLayoutOnPageChangeListener ，调用 &lt;code&gt;reset&lt;/code&gt; 方法，重设当前的滚动状态；
+调用 ViewPager 的 &lt;code&gt;addOnPageChangeListener&lt;/code&gt; 方法，设置监听：setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager));&lt;/p&gt;
+
+&lt;p&gt;最后设置setPagerAdapter(adapter, true)，整个方法就完成了，
+第一个参数就是 ViewPager 设置的 adapter 后面的参数留到下一节观察者模式讲解。&lt;/p&gt;
+
+&lt;h2 id=&#34;两个监听的实现类&#34;&gt;两个监听的实现类&lt;/h2&gt;
+
+&lt;p&gt;TabLayoutOnPageChangeListener 是一个监听，ViewPagerOnTabSelectedListener 是另一个监听。&lt;/p&gt;
+
+&lt;p&gt;先来看看 TabLayoutOnPageChangeListener。主要处理的是 ViewPager 发生变化时处理回调（尤其是需要实现跟 TabLayout 的关联，也就是说，当 ViewPager 在滑动时，TabLayout 需要怎么变化）。&lt;/p&gt;
+
+&lt;p&gt;它实现了 &lt;code&gt;ViewPager.OnPageChangeListener&lt;/code&gt; 接口，需要实现三个方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)，当当前页滚动时调用。&lt;/li&gt;
+&lt;li&gt;public void onPageSelected(int position)，当一个新页面被选中时调用。
+重要方法：tabLayout.selectTab(tabLayout.getTabAt(position), updateIndicator)&lt;/li&gt;
+&lt;li&gt;public void onPageScrollStateChanged(int state)，当滚动状态改变时调用。
+重要方法：tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;还有一个非接口实现方法 &lt;code&gt;reset&lt;/code&gt;，该接口重新设置了滚动状态：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private void reset() {
+    mPreviousScrollState = mScrollState = SCROLL_STATE_IDLE;
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;而 ViewPagerOnTabSelectedListener 跟上一个监听相反，主要处理的是当 TabLayout 中的 Tab 发生点击事件时，ViewPager 需要怎么变化。它实现的是&lt;code&gt;TabLayout.OnTabSelectedListener&lt;/code&gt; 接口，需要实现三个方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;public void onTabSelected(Tab tab)&lt;/li&gt;
+&lt;li&gt;public void onTabUnselected(Tab tab)&lt;/li&gt;
+&lt;li&gt;public void onTabReselected(Tab tab)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在这里，只实现了第一个方法，源码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  @Override
+  public void onTabSelected(TabLayout.Tab tab) {
+    mViewPager.setCurrentItem(tab.getPosition());
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;也就是当点击 TabLayout 的某个 tab 就将与之对应的那个 position 赋值给&lt;code&gt;setCurrentItem&lt;/code&gt; 完成 ViewPager 的跳转。&lt;/p&gt;
+
+&lt;p&gt;最后总结一下 &lt;code&gt;setupWithViewPager&lt;/code&gt; 是如何让 ViewPager 跟自身 TabLayout 产生关联的：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;传入 ViewPager，为该 ViewPager 设监听 TabLayoutOnPageChangeListener，这样就使得 ViewPager 在滚动状态发生改变时，TabLayout 对应的有所改变&lt;/li&gt;
+&lt;li&gt;然后为TabLayout自身设置ViewPagerOnTabSelectedListener 当 TabLayout 点击状态发生改变时，ViewPager 也有相应改变。&lt;/li&gt;
+&lt;li&gt;最后，将 ViewPager 设置的 adapter 也设置给自己。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;观察者模式的应用&#34;&gt;观察者模式的应用&lt;/h1&gt;
+
+&lt;h2 id=&#34;继承关系&#34;&gt;继承关系&lt;/h2&gt;
+
+&lt;p&gt;继承关系图如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/06/TabLayout-和-ViewPager-中的观察者模式-2.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/06/TabLayout-和-ViewPager-中的观察者模式-2.png&#34; alt=&#34;TabLayout 和 ViewPager 中的观察者模式-2&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;分析&#34;&gt;分析&lt;/h2&gt;
+
+&lt;p&gt;接下来开始分析 TabLayout 和 ViewPager 中用到的观察者模式。
+PagerAdapter 是一个抽象类，其中包含有一个 DataSetObservable 和 DataSetObserver 的引用。&lt;/p&gt;
+
+&lt;p&gt;PagerAdapter 中重要的方法是 &lt;code&gt;notifyDataSetChanged&lt;/code&gt;，当我们向 adapter 中增添数据后，都会调用这个方法。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public void notifyDataSetChanged() {
+    synchronized (this) {
+      if (mViewPagerObserver != null) {
+        mViewPagerObserver.onChanged();
+      }
+    }
+    mObservable.notifyChanged();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DataSetObservable 是 Observable&lt;DataSetObserver&gt; 的具体实现类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public class DataSetObservable extends Observable&amp;lt;DataSetObserver&amp;gt; {
+    public void notifyChanged() {
+      synchronized(mObservers) {
+        // since onChanged() is implemented by the app, it could do anything, including
+        // removing itself from {@link mObservers} - and that could cause problems if
+        // an iterator is used on the ArrayList {@link mObservers}.
+        // to avoid such problems, just march thru the list in the reverse order.
+        for (int i = mObservers.size() - 1; i &amp;gt;= 0; i--) {
+          mObservers.get(i).onChanged();
+        }
+      }
+    }
+
+    public void notifyInvalidated() {
+      synchronized (mObservers) {
+        for (int i = mObservers.size() - 1; i &amp;gt;= 0; i--) {
+          mObservers.get(i).onInvalidated();
+        }
+      }
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;而 DataSetObserver 是一个抽象类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public abstract class DataSetObserver {
+
+    public void onChanged() {
+      // Do nothing
+    }
+
+    public void onInvalidated() {
+      // Do nothing
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当 DataSetObserver 和 DataSetObservable 关联起来后，调用 DataSetObservable 的 &lt;code&gt;notifyChanged&lt;/code&gt; 方法时，会分别调用每一个 DataSetObserver 的 `onChanged 方法，达到通知的目的。&lt;/p&gt;
+
+&lt;p&gt;DataSetObserver 有两个实现类，一个是 PagerAdapterObserver:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private class PagerAdapterObserver extends DataSetObserver {
+    @Override
+    public void onChanged() {
+      populateFromPagerAdapter();
+    }
+
+    @Override
+    public void onInvalidated() {
+      populateFromPagerAdapter();
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个类位于 TabLayout 中，作用是当 &lt;code&gt;notifyChanged&lt;/code&gt; 时，重新加载 TabLayout 的布局和数据，具体实现的方法为 &lt;code&gt;populateFromPagerAdapter&lt;/code&gt;：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private void populateFromPagerAdapter() {
+    removeAllTabs();
+
+    if (mPagerAdapter != null) {
+      final int adapterCount = mPagerAdapter.getCount();
+      for (int i = 0; i &amp;lt; adapterCount; i++) {
+        addTab(newTab().setText(mPagerAdapter.getPageTitle(i)), false);
+      }
+
+      // Make sure we reflect the currently set ViewPager item
+      if (mViewPager != null &amp;amp;&amp;amp; adapterCount &amp;gt; 0) {
+        final int curItem = mViewPager.getCurrentItem();
+        if (curItem != getSelectedTabPosition() &amp;amp;&amp;amp; curItem &amp;lt; getTabCount()) {
+          selectTab(getTabAt(curItem));
+        }
+      }
+    } else {
+      removeAllTabs();
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;还有一个是位于 ViewPager 中的 PagerObserver 类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private class PagerObserver extends DataSetObserver {
+    @Override
+    public void onChanged() {
+      dataSetChanged();
+    }
+    @Override
+    public void onInvalidated() {
+      dataSetChanged();
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体实现方法是 &lt;code&gt;dataSetChanged&lt;/code&gt;：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  void dataSetChanged() {
+    // This method only gets called if our observer is attached, so mAdapter is non-null.
+
+    final int adapterCount = mAdapter.getCount();
+    mExpectedAdapterCount = adapterCount;
+    boolean needPopulate = mItems.size() &amp;lt; mOffscreenPageLimit * 2 + 1 &amp;amp;&amp;amp;
+            mItems.size() &amp;lt; adapterCount;
+    int newCurrItem = mCurItem;
+
+    boolean isUpdating = false;
+    for (int i = 0; i &amp;lt; mItems.size(); i++) {
+      final ItemInfo ii = mItems.get(i);
+      final int newPos = mAdapter.getItemPosition(ii.object);
+
+      if (newPos == PagerAdapter.POSITION_UNCHANGED) {
+        continue;
+      }
+
+      if (newPos == PagerAdapter.POSITION_NONE) {
+        mItems.remove(i);
+        i--;
+
+        if (!isUpdating) {
+          mAdapter.startUpdate(this);
+          isUpdating = true;
+        }
+
+        mAdapter.destroyItem(this, ii.position, ii.object);
+        needPopulate = true;
+
+        if (mCurItem == ii.position) {
+          // Keep the current item in the valid range
+          newCurrItem = Math.max(0, Math.min(mCurItem, adapterCount - 1));
+          needPopulate = true;
+        }
+        continue;
+      }
+
+      if (ii.position != newPos) {
+        if (ii.position == mCurItem) {
+          // Our current item changed position. Follow it.
+          newCurrItem = newPos;
+        }
+
+        ii.position = newPos;
+        needPopulate = true;
+      }
+    }
+
+    if (isUpdating) {
+      mAdapter.finishUpdate(this);
+    }
+
+    Collections.sort(mItems, COMPARATOR);
+
+    if (needPopulate) {
+      // Reset our known page widths; populate will recompute them.
+      final int childCount = getChildCount();
+      for (int i = 0; i &amp;lt; childCount; i++) {
+        final View child = getChildAt(i);
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        if (!lp.isDecor) {
+          lp.widthFactor = 0.f;
+        }
+      }
+
+      setCurrentItemInternal(newCurrItem, false, true);
+      requestLayout();
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体的逻辑可以不用去看，注意到最后调用了 &lt;code&gt;requestLayout&lt;/code&gt; 方法进行重新布局。&lt;/p&gt;
+
+&lt;p&gt;这样，当 adapter 的 &lt;code&gt;notifyDataSetChanged&lt;/code&gt; 方法被调用时，就会调用到 TabLayout 中的观察者 PagerAdapterObserver 的 &lt;code&gt;onChanged&lt;/code&gt; 方法，进而通过 &lt;code&gt;populateFromPagerAdapter&lt;/code&gt; 重新对 Tab 进行布局；并且调用到 ViewPager 中的观察者 PagerObserver 的 &lt;code&gt;onChanged&lt;/code&gt; 方法，进而通过 &lt;code&gt;dataSetChanged&lt;/code&gt; 重新对 ViewPager 进行布局；&lt;/p&gt;
+
+&lt;h2 id=&#34;注册&#34;&gt;注册&lt;/h2&gt;
+
+&lt;p&gt;最后还需要解决一个问题：观察者与被观察者是什么时候联系上的？也就是说，在整个流程中，观察者是如何注册到被观察者中去的？&lt;/p&gt;
+
+&lt;p&gt;需要注意到的是 ViewPager 的 setAdapter方法：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  public void setAdapter(PagerAdapter adapter) {
+    if (mAdapter != null) {
+      mAdapter.setViewPagerObserver(null);
+      mAdapter.startUpdate(this);
+      for (int i = 0; i &amp;lt; mItems.size(); i++) {
+        final ItemInfo ii = mItems.get(i);
+        mAdapter.destroyItem(this, ii.position, ii.object);
+      }
+      mAdapter.finishUpdate(this);
+      mItems.clear();
+      removeNonDecorViews();
+      mCurItem = 0;
+      scrollTo(0, 0);
+    }
+
+    final PagerAdapter oldAdapter = mAdapter;
+    mAdapter = adapter;
+    mExpectedAdapterCount = 0;
+
+    if (mAdapter != null) {
+      if (mObserver == null) {
+        mObserver = new PagerObserver();
+      }
+      mAdapter.setViewPagerObserver(mObserver);
+      mPopulatePending = false;
+      final boolean wasFirstLayout = mFirstLayout;
+      mFirstLayout = true;
+      mExpectedAdapterCount = mAdapter.getCount();
+      if (mRestoredCurItem &amp;gt;= 0) {
+        mAdapter.restoreState(mRestoredAdapterState, mRestoredClassLoader);
+        setCurrentItemInternal(mRestoredCurItem, false, true);
+        mRestoredCurItem = -1;
+        mRestoredAdapterState = null;
+        mRestoredClassLoader = null;
+      } else if (!wasFirstLayout) {
+        populate();
+      } else {
+        requestLayout();
+      }
+    }
+
+    if (mAdapterChangeListener != null &amp;amp;&amp;amp; oldAdapter != adapter) {
+      mAdapterChangeListener.onAdapterChanged(oldAdapter, adapter);
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;需要注意的代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  if (mAdapter != null) {
+    if (mObserver == null) {
+      mObserver = new PagerObserver();
+    }
+    mAdapter.setViewPagerObserver(mObserver);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;现在我们去 &lt;code&gt;setViewPagerObserver&lt;/code&gt; 方法中看看：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  void setViewPagerObserver(DataSetObserver observer) {
+    synchronized (this) {
+      mViewPagerObserver = observer;
+    }
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;再看 TabLayout 中，当调用 &lt;code&gt;setupWithViewPager&lt;/code&gt; 方法时，会调用一个方法 &lt;code&gt;setPagerAdapter&lt;/code&gt;：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  private void setPagerAdapter(@Nullable final PagerAdapter adapter, final boolean addObserver) {
+    if (mPagerAdapter != null &amp;amp;&amp;amp; mPagerAdapterObserver != null) {
+      // If we already have a PagerAdapter, unregister our observer
+      mPagerAdapter.unregisterDataSetObserver(mPagerAdapterObserver);
+    }
+
+    mPagerAdapter = adapter;
+
+    if (addObserver &amp;amp;&amp;amp; adapter != null) {
+      // Register our observer on the new adapter
+      if (mPagerAdapterObserver == null) {
+        mPagerAdapterObserver = new PagerAdapterObserver();
+      }
+      adapter.registerDataSetObserver(mPagerAdapterObserver);
+    }
+
+    // Finally make sure we reflect the new adapter
+    populateFromPagerAdapter();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到 &lt;code&gt;adapter.registerDataSetObserver(mPagerAdapterObserver)&lt;/code&gt;方法被调用，完成了注册任务。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Apidemos on ChiakiMayuzumi</title>
+    <link>http://chiakimayuzumi.github.io/apidemos/</link>
+    <description>Recent content in Apidemos on ChiakiMayuzumi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 09 Mar 2016 20:10:46 +0100</lastBuildDate>
+    <atom:link href="http://chiakimayuzumi.github.io/apidemos/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ExpandableListView的继承关系和设计模式</title>
+      <link>http://chiakimayuzumi.github.io/apidemos/expandablelistview/</link>
+      <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
+      
+      <guid>http://chiakimayuzumi.github.io/apidemos/expandablelistview/</guid>
+      <description>
+
+&lt;h1 id=&#34;继承关系&#34;&gt;继承关系&lt;/h1&gt;
+
+&lt;p&gt;ExpandableListView 继承关系如下图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/ExpandableListView继承关系.png&#34; alt=&#34;ExpandableListView继承关系&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;关于ExpandableListView 的用法可以参考ApiDemos的分析文章：&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/archives/3852&#34;&gt;[ApiDemos] ExpandableListActivity&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;下面来分析一下 ExpandableListView 从继承类中得到了哪些接口。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;继承自 Listview 中的接口：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;FixedViewInfo（用来在列表内展现一个固定位置视图）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;继承自AbsListView中的接口：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;SelectionBoundsAdjuster（允许当前列表项的顶级视图实现这个接口去修改它的展示的边界区域）&lt;/li&gt;
+&lt;li&gt;RecyclerListener（当一个 View 由于 ListView 的滑动被系统回收到 RecycleBin 的 mScrapViews 数组时会调用 RecyclerListener 中的 onMovedToScrapHeap 方法）&lt;/li&gt;
+&lt;li&gt;OnScrollListener（ Listview 分批加载用到）&lt;/li&gt;
+&lt;li&gt;MultiChoiceModeListener（监听器来帮助开发者进行多选处理）&lt;/li&gt;
+&lt;li&gt;LayoutParams（相当于一个 Layout 的信息包，封装了 Layout 的位置、高、宽等信息）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;继承自AdapterView的接口：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;AdapterContextMenuInfo（当显示 AdapterView 的上下文菜单时为 onCreateContextMenu 回调函数提供的额外的菜单信息）&lt;/li&gt;
+&lt;li&gt;OnItemClickListener（使用 ListView 的时候为 ListView 添加一个响应事件）&lt;/li&gt;
+&lt;li&gt;OnItemLongClickListener（长按响应）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;继承自ViewGroup的接口：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;MarginLayoutParams（用于定义和边缘的空白）&lt;/li&gt;
+&lt;li&gt;OnHierarchyChangeListener（监听 ViewGroup 并包括其继承者之中的增加和删除孩子的情况）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;expandablelistadapter&#34;&gt;ExpandableListAdapter&lt;/h1&gt;
+
+&lt;p&gt;一个接口，将基础数据链接到一个 ExpandableListView。 此接口的实施将提供访问Child的数据（由组分类），并实例化的 Child 和 Group。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;重要方法：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;getChildId (int groupPosition, int childPosition) 获取与在给定组给予孩子相关的数据。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;getChildrenCount (int groupPosition) 返回在指定 Group 的 Child 数目。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;getGroupView (int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) （类似于 ListView 的 getView 方法）,每次加载组列表时都会执行该方法重新绘制页面。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;getChildView,当展开分组时会调用此方法来绘制当前分组的子项。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;expandablelistview主要方法&#34;&gt;ExpandableListView主要方法&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;expandGroup (int groupPos) ;//在分组列表视图中 展开一组&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;setSelectedGroup (int groupPosition) ;//设置选择指定的组&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;setSelectedChild (int groupPosition, int childPosition, boolean shouldExpandGroup);//设置选择指定的子项&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;getPackedPositionGroup (long packedPosition);//返回所选择的组&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;getPackedPositionForChild (int groupPosition, int childPosition) ;//返回所选择的子项&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;getPackedPositionType (long packedPosition);//返回所选择项的类型（Child,Group）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;isGroupExpanded (int groupPosition);//判断此组是否展开&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;expandableListView.setDivider();这个是设定每个Group之间的分割线&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;expandableListView.setGroupIndicator();这个是设定每个Group之前的那个图标&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;expandableListView.collapseGroup(int group); 将第group组收起&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;设计模式&#34;&gt;设计模式&lt;/h1&gt;
+
+&lt;p&gt;由于 ExpandableListView 继承自 ListView ，并且也需要设置适配器 ExpandableListAdapter，因此 ExpandableListView 也运用了适配器模式，并且是对象适配器模式。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/UML_对象适配器.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/UML_对象适配器.png&#34; alt=&#34;UML_对象适配器&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;适配器模式介绍见文章：&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/archives/5692&#34;&gt;[Android]设计模式-适配器模式&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;大致用法如下：&lt;/p&gt;
+
+&lt;p&gt;//定义
+  expandableListView = (ExpandableListView)findViewById(R.id.expendlist);&lt;/p&gt;
+
+&lt;p&gt;//设置适配器
+  adapter = new MyExpandableListViewAdapter(this);&lt;/p&gt;
+
+&lt;p&gt;expandableListView.setAdapter(adapter);&lt;/p&gt;
+
+&lt;p&gt;//适配器代码
+   class MyExpandableListViewAdapter extends BaseExpandableListAdapter {&lt;/p&gt;
+
+&lt;p&gt;……&lt;/p&gt;
+
+&lt;p&gt;｝&lt;/p&gt;
+
+&lt;p&gt;为什么ExpandableListView要使用Adapter呢？跟ListView一样，需要能够显示各式各样的视图，每个人需要的显示效果各不相同，显示的数据类型、数量等也千变万化。那么如何隔离这种变化尤为重要。&lt;/p&gt;
+
+&lt;p&gt;通过增加一个 Adapter 层，可以来应对变化，将 ExpandableListView 需要的接口抽象到 Adapter 对象中，这样只要用户实现了 Adapter 的接口，ListView 就可以按照用户设定的显示效果、数量、数据来显示特定的 Item View。&lt;/p&gt;
+
+&lt;p&gt;通过代理数据集来告知数据的个数( getChildrenCount函数 )以及每个数据的类型( getChildId函数 )，最重要的是要解决 Item View 的输出。Item View 千变万化，但终究它都是 View 类型，Adapter 统一将 Item View 输出为 View ( getGroupView函数 )，这样就很好的应对了 Item View的可变性。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;适配器模式的优点：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;更好的复用性：系统需要使用现有的类，而此类的接口不符合系统的需要。那么通过适配器模式就可以让这些功能得到更好的复用。&lt;/li&gt;
+&lt;li&gt;更好的扩展性：在实现适配器功能的时候，可以调用自己开发的功能，从而自然地扩展系统的功能。&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>TextSwitcher 使用和源码分析</title>
+      <link>http://chiakimayuzumi.github.io/apidemos/textswitcher/</link>
+      <pubDate>Wed, 09 Mar 2016 20:10:46 +0100</pubDate>
+      
+      <guid>http://chiakimayuzumi.github.io/apidemos/textswitcher/</guid>
+      <description>
+
+&lt;h1 id=&#34;代码地址&#34;&gt;代码地址&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ChiakiMayuzumi/TextSwitcherTest&#34; title=&#34;github&#34;&gt;github&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;textswitcher介绍&#34;&gt;TextSwitcher介绍&lt;/h1&gt;
+
+&lt;p&gt;在 Java doc 中 TextSwitcher 是这样被描述的：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Specialized ViewSwitcher that contains only children of type TextView. A TextSwitcher is useful to animate a label on screen. Whenever setText(CharSequence) is called, TextSwitcher animates the current text out and animates the new text in.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;也就是说，TextSwitcher：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;有个 TextView 子视图&lt;/li&gt;
+&lt;li&gt;在文本更新时，能够让旧文本淡出，新文本淡入，从而呈现平滑切换的动画效果&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;textswitcher使用方法&#34;&gt;TextSwitcher使用方法&lt;/h1&gt;
+
+&lt;p&gt;下面通过最上面的简单代码来讲述如何使用 TestSwitcher&lt;/p&gt;
+
+&lt;p&gt;首先，在 layout 中添加一个 TextSwitcher 的控件：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; &amp;lt;TextSwitcher
+      android:id=&amp;quot;@+id/textSwitcher&amp;quot;
+      android:layout_width=&amp;quot;match_parent&amp;quot;
+      android:layout_height=&amp;quot;wrap_content&amp;quot;
+      android:onClick=&amp;quot;next&amp;quot;
+      /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后在 MainActivity 中进行 ViewFactory 的设置（用于生产视图）：&lt;/p&gt;
+
+&lt;p&gt;textSwitcher.setFactory(new ViewFactory() {
+              @Override
+              public View makeView() {
+                  TextView tv = new TextView(MainActivity.this);
+                  tv.setTextSize(20);
+                  tv.setTextColor(Color.BLUE);
+                  FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                  lp.gravity = Gravity.CENTER;
+                  tv.setLayoutParams(lp);
+                  return tv;
+              }
+          });&lt;/p&gt;
+
+&lt;p&gt;接下来为 textswitcher 设置淡入淡出动画：&lt;/p&gt;
+
+&lt;p&gt;textSwitcher.setInAnimation(AnimationUtils.loadAnimation(
+                  getApplicationContext(), android.R.anim.fade_in));
+          textSwitcher.setOutAnimation(AnimationUtils.loadAnimation(
+                  getApplicationContext(), android.R.anim.fade_out));&lt;/p&gt;
+
+&lt;p&gt;然后通过执行 textswitcher.setText（……） 来切换需要切换的文本，结果如下（转换效果是淡入淡出的，没有动图体现不出效果）：&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果1.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果1-169x300.png&#34; alt=&#34;TestSwitcherTest结果1&#34; width=&#34;169&#34; height=&#34;300&#34; class=&#34;alignnone size-medium wp-image-7144&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果2.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果2-169x300.png&#34; alt=&#34;TestSwitcherTest结果2&#34; width=&#34;169&#34; height=&#34;300&#34; class=&#34;alignnone size-medium wp-image-7145&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果3.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果3-169x300.png&#34; alt=&#34;TestSwitcherTest结果3&#34; width=&#34;169&#34; height=&#34;300&#34; class=&#34;alignnone size-medium wp-image-7146&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果4.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TestSwitcherTest结果4-169x300.png&#34; alt=&#34;TestSwitcherTest结果4&#34; width=&#34;169&#34; height=&#34;300&#34; class=&#34;alignnone size-medium wp-image-7147&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;源码分析&#34;&gt;源码分析&lt;/h1&gt;
+
+&lt;p&gt;学会了如何使用 TextSwitcher 后，我们来试着从源码分析它是如何实现文本切换功能的。&lt;/p&gt;
+
+&lt;h2 id=&#34;textswither继承关系&#34;&gt;TextSwither继承关系&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TextSwitcher继承图.png&#34;&gt;&lt;img src=&#34;http://blog.qiji.tech/wp-content/uploads/2016/03/TextSwitcher继承图.png&#34; alt=&#34;TextSwitcher继承图&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;从中我们可以得知：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;继承自 FrameLayout，所以其子View层叠地放置着&lt;/li&gt;
+&lt;li&gt;继承自 ViewAnimator ，所以其持有两个 Animation 对象，用于呈现淡出、渐入等动画效果&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;textswither构造方法&#34;&gt;TextSwither构造方法&lt;/h2&gt;
+
+&lt;p&gt;TextSwither 有两种构造方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TextSwitcher(Context context) 创建一个新的空TextSwitcher，参数 context 为应用程序上下文；&lt;/li&gt;
+&lt;li&gt;TextSwitcher(Context context, AttributeSet attrs) 使用提供的context和attributes来创建一个空的TextSwitcher，参数 context 和 attrs 分别为应用程序环境和属性集合。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;textswither重要方法&#34;&gt;TextSwither重要方法&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;addView&lt;/strong&gt;(View child, int index, ViewGroup.LayoutParams params)&lt;/p&gt;
+
+&lt;p&gt;根据指定的布局参数新增一个子视图，参数如下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;child：新增的子视图&lt;/li&gt;
+&lt;li&gt;index：新增子视图的位置&lt;/li&gt;
+&lt;li&gt;params：新增子视图的布局参数&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;源码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; public void setText(CharSequence text) {
+      final TextView t = (TextView) getNextView();
+      t.setText(text);
+      showNext();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;setCurrentText&lt;/strong&gt;(CharSequence text)&lt;/p&gt;
+
+&lt;p&gt;设置当前显示的文本视图的文字内容，非动画方式显示，参数：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;text：需要显示的新文本内容&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;源码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; public void setCurrentText(CharSequence text) {
+      ((TextView)getCurrentView()).setText(text);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;setText&lt;/strong&gt;(CharSequence text)&lt;/p&gt;
+
+&lt;p&gt;设置下一视图的文本内容并切换到下一视图。可以动画的退出当前文本内容，显示下一文本内容，参数：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;text：需要显示的新文本内容&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;源码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; public void setText(CharSequence text) {
+      final TextView t = (TextView) getNextView();
+      t.setText(text);
+      showNext();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最终调用了 android.widget.ViewAnimator 的 showOnly 方法：&lt;/p&gt;
+
+&lt;p&gt;void showOnly(int childIndex, boolean animate) {
+          final int count = getChildCount();
+          for (int i = 0; i &amp;lt; count; i++) {
+              final View child = getChildAt(i);
+              if (i == childIndex) {
+                  if (animate &amp;amp;&amp;amp; mInAnimation != null) {
+                      // 让新 TextView 演示进入动画
+                      child.startAnimation(mInAnimation);
+                  }
+                  child.setVisibility(View.VISIBLE);
+                  mFirstTime = false;
+              } else {
+                  if (animate &amp;amp;&amp;amp; mOutAnimation != null &amp;amp;&amp;amp; child.getVisibility() == View.VISIBLE) {
+                      // 让旧 TextView 演示淡出动画
+                      child.startAnimation(mOutAnimation);
+                  } else if (child.getAnimation() == mInAnimation)
+                      child.clearAnimation();
+                  child.setVisibility(View.GONE);
+              }
+          }
+      }&lt;/p&gt;
+
+&lt;p&gt;在实现的过程中不得不提到接口 ViewSwitcher.ViewFactory，使用时需要注意一定要实现 public abstract View makeView () 方法，它的作用是创建一个用于添加到视图转换器(ViewSwitcher)中的新视图，返回值是 View （一个视图）。&lt;/p&gt;
+
+&lt;p&gt;我们还需要追溯到 ViewSwithcer 的源码去探究一下 setFactory 方法、setInAnimation 方法和 setOutAnimation 方法的源代码和作用。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;setFactory&lt;/strong&gt;(ViewFactory factory)&lt;/p&gt;
+
+&lt;p&gt;设置用来生成将在视图转换器中切换的两个视图的工厂。也可以调用两次 addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 来替代使用工厂的方法。也就是说设置 ViewFactory 和使用 addView 都可以手动添加一个 View 到 ViewSwithcer 中。&lt;/p&gt;
+
+&lt;p&gt;源码：&lt;/p&gt;
+
+&lt;p&gt;public void setFactory(ViewFactory factory) {
+          mFactory = factory;
+          // 构建一个子View
+          obtainView();
+          // 再构建一个子View
+          obtainView();
+      }&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;setInAnimation&lt;/strong&gt;(Animation inAnimation)&lt;/p&gt;
+
+&lt;p&gt;就是设置 ViewAnimator 所持有的 Animation 对象。&lt;/p&gt;
+
+&lt;p&gt;源码（以 setInAnimation 为例）：&lt;/p&gt;
+
+&lt;p&gt;public void setInAnimation(Animation inAnimation) {
+          mInAnimation = inAnimation;
+      }&lt;/p&gt;
+
+&lt;p&gt;关于 TextSwitcher 的源码分析暂时就到这里。&lt;/p&gt;
+
+&lt;h1 id=&#34;设计方法&#34;&gt;设计方法&lt;/h1&gt;
+
+&lt;p&gt;TextSwitcher 使用了工厂方法模式，通过 setFactory 来设置 ViewFactory 工厂，从而在每次转换的时候生成需要的 View。&lt;/p&gt;
+
+&lt;h1 id=&#34;布局&#34;&gt;布局&lt;/h1&gt;
+
+&lt;p&gt;由于其继承了 FrameLayout，Framelayout 是从左上角开始叠加显示图形的，所以 Test 代码的布局中，即使设置了居中，在运行后 TextSwitcher 也不会居中显示。&lt;/p&gt;
+
+&lt;p&gt;那如何设置 textswitcher 的 childview 居中呢？Framelayout 不支持 gravity 属性，所以 textswitcher 也没有。只能设置 child 的 layout_gravity,代码如下：&lt;/p&gt;
+
+&lt;p&gt;FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                  lp.gravity = Gravity.CENTER;
+                  tv.setLayoutParams(lp);&lt;/p&gt;
+
+&lt;p&gt;然后就能居中显示了。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>设计模式-组合模式 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/blabla/composite/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/blabla/composite/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        设计模式-组合模式
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>设计模式-组合模式 </h1>
+
+			<p>#模式名称（pattem name）</p>
+
+<p>组合(Composite)模式的其它翻译名称也很多，比如合成模式、树模式等等。在《设计模式》一书中给出的定义是：
+&gt; 将对象以树形结构组织起来，以达成“部分－整体”的层次结构，使得客户端对单个对象和组合对象的使用具有一致性。</p>
+
+<p>#问题（problem）</p>
+
+<p>以下情况下适用组合模式：</p>
+
+<p>你想表示对象的部分-整体层次结构；你希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。</p>
+
+<p>它使我们树型结构的问题中，模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。</p>
+
+<p>组合模式让你可以优化处理递归或分级数据结构。</p>
+
+<p>#解决方案（solution）</p>
+
+<p>在我们学习组合模式（Composite）之前，让我们先讲解一下透明方式和安全方式。</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/03/透明模式结构图.jpg" alt="透明模式结构图" /></p>
+
+<p><strong>透明方式</strong>：在Component中声明所有用来管理子对象的方法，如Add()方法，Remove()方法及GetChild()方法，所有实现Component接口的子类都具备这些方法，这使得Component和子类具备一致的行为接口，使得对客户端无需区别树叶和树枝对象。</p>
+
+<p>正由于我们的Composite和Leaf都具备一致的接口行为，但我们知道Leaf不应该具有Add()，Remove()及GetChild()方法，因为我们叶子节点不能再添加和移除节点了。</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/03/安全模式结构图.jpg" alt="安全模式结构图" /></p>
+
+<p><strong>安全模式</strong>：在透明模式基础上把Component中声明所有用来管理子对象的方法移到Composite中，在Composite实现子对象的管理方法，那么Leaf就没有子对象管理方法，这使得Composite和Leaf的行为接口不一致，所以客户端在调用时要知道树叶和树枝对象存在。</p>
+
+<p><strong>基本结构如下：</strong></p>
+
+<p>抽象构件（Component）：定义参加组合的对象的共有方法和属性，可以定义一些默认的行为或属性。</p>
+
+<p>叶子构件（Leaf）：叶子对象，其下没有分支。</p>
+
+<p>树枝构件（Composit）：树枝对象，它的作用是组合树枝节点和叶子节点。</p>
+
+<p>#效果（consequences）</p>
+
+<p><strong>组合模式的优点：</strong></p>
+
+<ul>
+<li><p>高层模块调用简单；一棵树形机构中的所有节点都是Component，局部和整体对调用者来说没有任何区别，也就是说，高层模块不必关心自己处理的是单个对象还是整个组合结构，简化了高层模块的代码。</p></li>
+
+<li><p>节点自由增加；使用了组合模式后，我们可以看看，如果想增加一个树枝节点、树叶节点是不是都很容易呀，只要找到它的父节点就成，非常容易扩展，符合开闭原则，对以后的维护非常有利。</p></li>
+</ul>
+
+<p><strong>组合模式的缺点：</strong></p>
+
+<ul>
+<li>使用组合模式后，控制树枝构件的类型不太容易。</li>
+<li>用继承的方法来增加新的行为很困难。</li>
+</ul>
+
+<p><strong>组合模式的应用：</strong></p>
+
+<p>维护和展示部分－整体关系的场景，如树形菜单、文件和文件夹管理等能
+从一个整体中能够独立出部分模块或功能的场景。</p>
+
+<p><strong>组合模式的注意事项：</strong></p>
+
+<p>只要是树形结构，就要考虑使用组合模式，这个一定要记住，只要是要体现局部和整体的关系的时候，而且这种关系还可能比较深，考虑一下组合模式吧。</p>
+
+<p>#示例</p>
+
+<p>下面分别用两种方法实现公司的树形结构。</p>
+
+<p>安全模式下的代码：</p>
+
+<p>抽象构件（Component）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>public abstract class Company {</p>
+
+<pre><code>private String name;
+
+public Company(String name) {
+  this.name = name;
+}
+
+public Company() {
+}
+
+public String getName() {
+  return name;
+}
+
+public void setName(String name) {
+  this.name = name;
+}
+
+protected abstract void display(int depth);
+</code></pre>
+
+<p>}</p>
+
+<p>树枝构件（Composit）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>import java.util.ArrayList;
+  import java.util.List;</p>
+
+<p>public class ConcreteCompany extends Company {</p>
+
+<pre><code> private List&lt;Company&gt; cList;  
+
+ public ConcreteCompany() {
+  cList = new ArrayList&lt;Company&gt;();
+ }
+
+ public ConcreteCompany(String name) {
+  super(name);
+  cList = new ArrayList&lt;Company&gt;();
+
+ }
+
+ public void add(Company company) {
+  cList.add(company);
+ }
+
+ @Override
+ protected void display(int depth) {
+  StringBuilder sb = new StringBuilder(&quot;&quot;);
+  for (int i =0;i&lt;depth ;i++ ) 
+  {
+    sb.append(&quot;-&quot;);
+  }
+ System.out.println(new String(sb) + this.getName());
+ for (Company c : cList) {
+  c.display(depth + 2);
+  }
+
+ }
+
+ public void remove(Company company) {
+  cList.remove(company);
+ }
+</code></pre>
+
+<p>}</p>
+
+<p>叶子构件（Leaf）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>public class FinanceDepartment extends Company {</p>
+
+<pre><code>  public FinanceDepartment(){  
+
+  }  
+
+  public FinanceDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&quot;&quot;);  
+      for (int i = 0; i &lt; depth; i++) {  
+          sb.append(&quot;-&quot;);  
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>另一个叶子构件（Leaf）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>public class HRDepartment extends Company {</p>
+
+<pre><code>  public HRDepartment(){  
+
+  }  
+
+  public HRDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&quot;&quot;);  
+      for (int i = 0; i &lt; depth; i++) {  
+          sb.append(&quot;-&quot;);   
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>透明模式下的代码：</p>
+
+<p>抽象构件（Component）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>public abstract class Company
+  {
+    private String name;</p>
+
+<pre><code>public Company(String name) {
+  this.name = name;
+}
+
+public Company() {
+}
+
+public String getName() {
+  return name;
+}
+
+public void setName(String name) {
+  this.name = name;
+}
+
+protected abstract void add(Company company);
+
+protected abstract void remove(Company company);
+
+protected abstract void display(int depth);
+</code></pre>
+
+<p>}</p>
+
+<p>树枝构件（Composit）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>import java.util.ArrayList;
+  import java.util.List;</p>
+
+<p>public class ConcreteCompany extends Company {<br />
+     private List<Company> cList;</p>
+
+<pre><code> public ConcreteCompany() {
+  cList = new ArrayList&lt;Company&gt;();
+ }
+
+ public ConcreteCompany(String name) {
+  super(name);
+  cList = new ArrayList&lt;Company&gt;();
+
+ }
+
+ @Override
+ public void add(Company company) {
+  cList.add(company);
+ }
+
+ @Override
+ protected void display(int depth) {
+  StringBuilder sb = new StringBuilder(&quot;&quot;);
+  for (int i =0;i&lt;depth ;i++ ) 
+  {
+    sb.append(&quot;-&quot;);
+  }
+ System.out.println(new String(sb) + this.getName());
+ for (Company c : cList) {
+  c.display(depth + 2);
+  }
+
+ }
+
+ @Override
+ protected void remove(Company company) {
+  cList.remove(company);
+ }
+</code></pre>
+
+<p>}</p>
+
+<p>叶子构件（Leaf）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>public class FinanceDepartment extends Company {</p>
+
+<pre><code>  public FinanceDepartment(){  
+
+  }  
+
+  public FinanceDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void add(Company company) {  
+
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&quot;&quot;);  
+      for (int i = 0; i &lt; depth; i++) {  
+          sb.append(&quot;-&quot;);  
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+
+  @Override  
+  protected void remove(Company company) {  
+
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>另一个叶子构件（Leaf）类：</p>
+
+<p>package com.test.company;</p>
+
+<p>public class HRDepartment extends Company {</p>
+
+<pre><code>  public HRDepartment(){  
+
+  }  
+
+  public HRDepartment(String name){  
+      super(name);  
+  }  
+
+  @Override  
+  protected void add(Company company) {  
+
+  }  
+
+  @Override  
+  protected void display(int depth) {  
+      StringBuilder sb = new StringBuilder(&quot;&quot;);  
+      for (int i = 0; i &lt; depth; i++) {  
+          sb.append(&quot;-&quot;);   
+      }  
+      System.out.println(new String(sb) + this.getName() ) ;   
+  }  
+
+  @Override  
+  protected void remove(Company company) {  
+
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>运行客户端，均能得到以下结果：</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/03/结果.png" alt="结果" /></p>
+
+<p>#Android源码中的应用</p>
+
+<p>在Android源码中，都能找到使用组合模式的例子，其中ViewGroup和View的结构就是非常典型的组合模式，结构图如下所示：</p>
+
+<p>现在来看看它们是如何利用组合模式组织在一起的，首先在View类定义了有关具体操作，然后在ViewGroup类中继承View类，并添加相关的增加、删除和查找孩子View节点，代码如下：</p>
+
+<pre><code>public abstract class ViewGroup extends View implements ViewParent, ViewManager {
+  ……
+｝
+</code></pre>
+
+<p>接着看增加addView方法：</p>
+
+<p>/**
+       * Adds a child view. If no layout parameters are already set on the child, the
+       * default parameters for this ViewGroup are set on the child.
+       *
+       * @param child the child view to add
+       *
+       * @see #generateDefaultLayoutParams()
+       */
+      public void addView(View child) {
+          addView(child, -1);
+      }</p>
+
+<pre><code> ……
+  public void addView(View child, int index) {
+      LayoutParams params = child.getLayoutParams();
+      if (params == null) {
+          params = generateDefaultLayoutParams();
+          if (params == null) {
+              throw new IllegalArgumentException(&quot;generateDefaultLayoutParams() cannot return null&quot;);
+          }
+      }
+      addView(child, index, params);
+  }
+
+……
+  public void addView(View child, int width, int height) {
+      final LayoutParams params = generateDefaultLayoutParams();
+      params.width = width;
+      params.height = height;
+      addView(child, -1, params);
+  }
+
+ ……
+  public void addView(View child, LayoutParams params) {
+      addView(child, -1, params);
+  }
+
+  ……
+  public void addView(View child, int index, LayoutParams params) {
+      if (DBG) {
+          System.out.println(this + &quot; addView&quot;);
+      }
+
+      // addViewInner() will call child.requestLayout() when setting the new LayoutParams
+      // therefore, we call requestLayout() on ourselves before, so that the child's request
+      // will be blocked at our level
+      requestLayout();
+      invalidate(true);
+      addViewInner(child, index, params, false);
+  }
+</code></pre>
+
+<p>也有removeView方法：</p>
+
+<p>public void removeView(View view) {
+          removeViewInternal(view);
+          requestLayout();
+          invalidate(true);
+      }</p>
+
+<pre><code> ……
+  public void removeViewInLayout(View view) {
+      removeViewInternal(view);
+  }
+
+ ……
+  public void removeViewsInLayout(int start, int count) {
+      removeViewsInternal(start, count);
+  }
+
+ ……
+  public void removeViewAt(int index) {
+      removeViewInternal(index, getChildAt(index));
+      requestLayout();
+      invalidate(true);
+  }
+</code></pre>
+
+<p>……
+      public void removeViews(int start, int count) {
+          removeViewsInternal(start, count);
+          requestLayout();
+          invalidate(true);
+      }</p>
+
+<pre><code>  private void removeViewInternal(View view) {
+      final int index = indexOfChild(view);
+      if (index &gt;= 0) {
+          removeViewInternal(index, view);
+      }
+  }
+
+  private void removeViewInternal(int index, View view) {
+
+      if (mTransition != null) {
+          mTransition.removeChild(this, view);
+      }
+
+      boolean clearChildFocus = false;
+      if (view == mFocused) {
+          view.clearFocusForRemoval();
+          clearChildFocus = true;
+      }
+
+      if (view.getAnimation() != null ||
+              (mTransitioningViews != null &amp;&amp; mTransitioningViews.contains(view))) {
+          addDisappearingView(view);
+      } else if (view.mAttachInfo != null) {
+         view.dispatchDetachedFromWindow();
+      }
+
+      onViewRemoved(view);
+
+      needGlobalAttributesUpdate(false);
+
+      removeFromArray(index);
+
+      if (clearChildFocus) {
+          clearChildFocus(view);
+      }
+  }
+
+ ……
+
+  private void removeViewsInternal(int start, int count) {
+      final View focused = mFocused;
+      final boolean detach = mAttachInfo != null;
+      View clearChildFocus = null;
+
+      final View[] children = mChildren;
+      final int end = start + count;
+
+      for (int i = start; i &lt; end; i++) {
+          final View view = children[i];
+
+          if (mTransition != null) {
+              mTransition.removeChild(this, view);
+          }
+
+          if (view == focused) {
+              view.clearFocusForRemoval();
+              clearChildFocus = view;
+          }
+
+          if (view.getAnimation() != null ||
+              (mTransitioningViews != null &amp;&amp; mTransitioningViews.contains(view))) {
+              addDisappearingView(view);
+</code></pre>
+
+<p>} else if (detach) {
+                 view.dispatchDetachedFromWindow();
+              }</p>
+
+<pre><code>          needGlobalAttributesUpdate(false);
+
+          onViewRemoved(view);
+      }
+
+      removeFromArray(start, count);
+
+      if (clearChildFocus != null) {
+          clearChildFocus(clearChildFocus);
+      }
+  }
+
+
+  public void removeAllViews() {
+      removeAllViewsInLayout();
+      requestLayout();
+      invalidate(true);
+  }
+
+……
+  public void removeAllViewsInLayout() {
+      final int count = mChildrenCount;
+      if (count &lt;= 0) {
+          return;
+      }
+
+      final View[] children = mChildren;
+      mChildrenCount = 0;
+
+      final View focused = mFocused;
+      final boolean detach = mAttachInfo != null;
+      View clearChildFocus = null;
+</code></pre>
+
+<p>needGlobalAttributesUpdate(false);</p>
+
+<pre><code>      for (int i = count - 1; i &gt;= 0; i--) {
+          final View view = children[i];
+
+          if (mTransition != null) {
+              mTransition.removeChild(this, view);
+          }
+
+          if (view == focused) {
+              view.clearFocusForRemoval();
+              clearChildFocus = view;
+          }
+
+          if (view.getAnimation() != null ||
+                  (mTransitioningViews != null &amp;&amp; mTransitioningViews.contains(view))) {
+              addDisappearingView(view);
+          } else if (detach) {
+             view.dispatchDetachedFromWindow();
+          }
+
+          onViewRemoved(view);
+
+          view.mParent = null;
+          children[i] = null;
+      }
+
+      if (clearChildFocus != null) {
+          clearChildFocus(clearChildFocus);
+      }
+  }
+
+ ……
+  protected void removeDetachedView(View child, boolean animate) {
+      if (mTransition != null) {
+          mTransition.removeChild(this, child);
+      }
+
+      if (child == mFocused) {
+          child.clearFocus();
+      }
+
+      if ((animate &amp;&amp; child.getAnimation() != null) ||
+              (mTransitioningViews != null &amp;&amp; mTransitioningViews.contains(child))) {
+          addDisappearingView(child);
+      } else if (child.mAttachInfo != null) {
+          child.dispatchDetachedFromWindow();
+      }
+
+      onViewRemoved(child);
+  }
+</code></pre>
+
+<p>也有getChild方法：</p>
+
+<p>/**
+       * Returns the view at the specified position in the group.
+       *
+       * @param index the position at which to get the view from
+       * @return the view at the specified position or null if the position
+       *         does not exist within the group
+       */
+      public View getChildAt(int index) {
+          if (index &lt; 0 || index &gt;= mChildrenCount) {
+              return null;
+          }
+          return mChildren[index];
+      }</p>
+
+<p>具体叶子节点，如Button，它是继承TextView的，TextView是继承View的，代码如下：</p>
+
+<p>public class TextView extends View implements ViewTreeObserver.OnPreDrawListener {
+  ……
+  }</p>
+
+<p>其中使用（继承）到ViewGroup类的有我们常用的容器类（包装和容纳各种View），如LinearLayout、FrameLayout等，代码如下：</p>
+
+<p>public class LinearLayout extends ViewGroup {
+      public static final int HORIZONTAL = 0;
+      public static final int VERTICAL = 1;
+  ……
+  }</p>
+
+<p>public class FrameLayout extends ViewGroup {
+  ……
+  }</p>
+
+<p>public class RelativeLayout extends ViewGroup {
+      private static final String LOG_TAG = &ldquo;RelativeLayout&rdquo;;</p>
+
+<pre><code>  private static final boolean DEBUG_GRAPH = false;
+</code></pre>
+
+<p>……
+  }</p>
+
+<p>public class AbsoluteLayout extends ViewGroup {
+      public AbsoluteLayout(Context context) {
+          super(context);
+      }
+  }
+  ……</p>
+
+<p>#总结</p>
+
+<ul>
+<li><p>组合模式（Composite）采用树形层次结构来实现，只要是要体现局部和整体的关系的时候，而且这种关系还可能比较深，考虑一下组合模式。</p></li>
+
+<li><p>组合模式（Composite）中，透明方式和安全方式的使用抉择，虽然透明方式有可能违背面向对象的SRP原则（单一职责），而安全方式没有很好的封装变化，但在实际开发时我们要根据具体的情况权衡利弊。</p></li>
+</ul>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/blabla/factory/" title="设计模式-工厂模式">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              设计模式-工厂模式
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/" title="博客目录">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              博客目录
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

@@ -8,18 +8,18 @@
   <head lang="en-us">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
-    <title>Using StarterNetworkActivity to make easier HTTP request - ChiakiMayuzumi</title>
+    <title>Others - ChiakiMayuzumi</title>
     <meta name="generator" content="Hugo 0.15" />
 
     
     <meta name="description" content="A material design theme for documentations.">
     
-    <link rel="canonical" href="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/others/">
     
     <meta name="author" content="ChiakiMayuzumi">
     
 
-    <meta property="og:url" content="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/others/">
     <meta property="og:title" content="ChiakiMayuzumi">
     <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
     <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
@@ -68,11 +68,12 @@
     <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
 
     
+    <link href="http://chiakimayuzumi.github.io/others/index.xml" rel="alternate" type="application/rss+xml" title="ChiakiMayuzumi" />
+    <link href="http://chiakimayuzumi.github.io/others/index.xml" rel="feed" type="application/rss+xml" title="ChiakiMayuzumi" />
+    
 
   </head>
   <body class="palette-primary-light red palette-accent-light green">
-
-
 
 
 <div class="backdrop">
@@ -93,7 +94,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Using StarterNetworkActivity to make easier HTTP request
+        Other
       </div>
     </div>
 
@@ -213,178 +214,18 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Using StarterNetworkActivity to make easier HTTP request </h1>
+			<h1>Pages in Other</h1>
 
 			
+			<a href="http://chiakimayuzumi.github.io/others/setupwithviewpager/" title="setupWithViewPager()后到底发生了什么？">
+				<h2>setupWithViewPager()后到底发生了什么？</h2>
+			</a>
 
-<p><a href="https://github.com/qijitech/android-starter-kit">android-starter-kit</a></p>
+			<br>
+			相信使用过 TabLayout 和 ViewPager 的人对这个方法一定不陌生了，当我们为 ViewPager 设置好 adapter 后，需要调用 TabLayout 的 setupWithViewPager 方法将 ViewPager 的引用传递进去： mViewPager.setAdapter(mAdapter); mTabLayout.setupWithViewPager(mViewPager); 那么接下来问题来了，为什么 setupWithViewPager 之后，ViewPager 和 TabLayout 就能关联起来呢？并且 ViewPager 设置的 adapter 中的 PageTitle数据就能正确反应到每一个 Tab 中去呢？为了搞明白这些背后的操作，我认为我们有必要去查看方法 setupWithViewPager 的源代码。 分析 setupWithViewPager() 的原理 方法源码 方法如下： public void setupWithViewPager(@Nullable final ViewPager viewPager) { if (mViewPager != null &amp;&amp; mPageChangeListener != null) { mViewPager.removeOnPageChangeListener(mPageChangeListener); } if (viewPager != null) { final PagerAdapter adapter = viewPager.getAdapter(); if (adapter == null) { throw new IllegalArgumentException(&quot;ViewPager does not have a PagerAdapter set&quot;); } mViewPager = viewPager; if (mPageChangeListener == null) { mPageChangeListener = new TabLayoutOnPageChangeListener(this); } mPageChangeListener.reset(); viewPager.addOnPageChangeListener(mPageChangeListener); setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager)); setPagerAdapter(adapter, true); } else { mViewPager = null; setOnTabSelectedListener(null); setPagerAdapter(null, true); } } 先看第一部分： if (mViewPager != null &amp;&amp; mPageChangeListener != null) { mViewPager.removeOnPageChangeListener(mPageChangeListener); } 如果已经设置过 ViewPager 了，并且也设置了PageChangeListener，则将它移除。 再来第二部分： else { mViewPager = null; setOnTabSelectedListener(null); setPagerAdapter(null, true); } 如果传入了一个空的 ViewPager，就将 ViewPager，OnTabSelectedListener和PagerAdapter都设置为空。 然后是第三部分： if (viewPager != null) { final PagerAdapter adapter = viewPager.getAdapter(); if (adapter == null) { throw new IllegalArgumentException(&quot;ViewPager does not have a PagerAdapter set&quot;); } mViewPager = viewPager; if (mPageChangeListener == null) { mPageChangeListener = new TabLayoutOnPageChangeListener(this); } mPageChangeListener.reset(); viewPager.addOnPageChangeListener(mPageChangeListener); setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager)); setPagerAdapter(adapter, true); } 如果 ViewPager 不为空，则将它赋值给 PagerAdapter 类型的引用 mViewPager。ViewPager 的 adapter 类型继承自 FragmentPagerAdapter，FragmentPagerAdapter 则是继承自 PagerAdapter，所以这样赋值是没有问题的。当adapter 为 null 抛出异常。 将这个传入的 ViewPager 引用赋值给类私有变量 mViewPager； 如果 TabLayoutOnPageChangeListener 为空，则新建一个 TabLayoutOnPageChangeListener ，调用 reset 方法，重设当前的滚动状态； 调用 ViewPager 的 addOnPageChangeListener 方法，设置监听：setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager)); 最后设置setPagerAdapter(adapter, true)，整个方法就完成了， 第一个参数就是 ViewPager 设置的 adapter 后面的参数留到下一节观察者模式讲解。 两个监听的实现类 TabLayoutOnPageChangeListener 是一个监听，ViewPagerOnTabSelectedListener 是另一个监听。 先来看看 TabLayoutOnPageChangeListener。主要处理的是 ViewPager 发生变化时处理回调（尤其是需要实现跟 TabLayout 的关联，也就是说，当 ViewPager 在滑动时，TabLayout 需要怎么变化）。 它实现了 ViewPager.OnPageChangeListener 接口，需要实现三个方法： public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)，当当前页滚动时调用。 public void onPageSelected(int position)，当一个新页面被选中时调用。 重要方法：tabLayout.selectTab(tabLayout.getTabAt(position), updateIndicator) public void onPageScrollStateChanged(int state)，当滚动状态改变时调用。 重要方法：tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator) 还有一个非接口实现方法 reset，该接口重新设置了滚动状态： private void reset() { mPreviousScrollState = mScrollState = SCROLL_STATE_IDLE; } 而 ViewPagerOnTabSelectedListener 跟上一个监听相反，主要处理的是当 TabLayout 中的 Tab 发生点击事件时，ViewPager 需要怎么变化。它实现的是TabLayout.OnTabSelectedListener 接口，需要实现三个方法： public void onTabSelected(Tab tab) public void onTabUnselected(Tab tab) public void onTabReselected(Tab tab) 在这里，只实现了第一个方法，源码如下： @Override public void onTabSelected(TabLayout.Tab tab) { mViewPager.setCurrentItem(tab.getPosition()); } 也就是当点击 TabLayout 的某个 tab 就将与之对应的那个 position 赋值给setCurrentItem 完成 ViewPager 的跳转。 最后总结一下 setupWithViewPager 是如何让 ViewPager 跟自身 TabLayout 产生关联的： 传入 ViewPager，为该 ViewPager 设监听 TabLayoutOnPageChangeListener，这样就使得 ViewPager 在滚动状态发生改变时，TabLayout 对应的有所改变 然后为TabLayout自身设置ViewPagerOnTabSelectedListener 当 TabLayout 点击状态发生改变时，ViewPager 也有相应改变。 最后，将 ViewPager 设置的 adapter 也设置给自己。 观察者模式的应用 继承关系 继承关系图如下： 分析 接下来开始分析 TabLayout 和 ViewPager 中用到的观察者模式。 PagerAdapter 是一个抽象类，其中包含有一个 DataSetObservable 和 DataSetObserver 的引用。 PagerAdapter 中重要的方法是 notifyDataSetChanged，当我们向 adapter 中增添数据后，都会调用这个方法。 public void notifyDataSetChanged() { synchronized (this) { if (mViewPagerObserver != null) { mViewPagerObserver.onChanged(); } } mObservable.notifyChanged(); } DataSetObservable 是 Observable 的具体实现类： public class DataSetObservable extends Observable&lt;DataSetObserver&gt; { public void notifyChanged() { synchronized(mObservers) { // since onChanged() is implemented by the app, it could do anything, including // removing itself from {@link mObservers} - and that could cause problems if // an iterator is used on the ArrayList {@link mObservers}.
 
-<p><code>android-starter-kit</code> is a fast development kit for Android developer,and this topic describes how to use <code>StarterNetworkActivity</code> to make your new activity’s HTTP requests easier.</p>
-
-<h2 id="overview">Overview</h2>
-
-<p>To make the HTTP requests, we could use some third-party libraries such as <code>retrofit 2.0</code>,which is known as a type-safe HTTP client for Android and Java.</p>
-
-<p><code>android-starter-kit</code> simply encapsulates <code>retrofit 2.0</code> in it so if you are familiar with <code>retrofit 2.0</code>,it won’t be difficult for you to use <code>StarterNetworkActivity</code>.</p>
-
-<h2 id="how-to-use">How to use</h2>
-
-<p>In <code>android-starter-kit</code> demo App ,<code>LoginActivity</code> shows how to use <code>StarterNetworkActivity</code>,so let’s see the source code in :</p>
-
-<pre><code>  com.smartydroid.android.kit.demo.ui.activity.LoginActivity
-</code></pre>
-
-<h2 id="preparations">Preparations</h2>
-
-<p>Preparations must be done before using <code>StarterNetworkActivity</code>,which contains:</p>
-
-<ul>
-<li>a proper entity class</li>
-<li>get RetrofitBuilder with baseUrl</li>
-<li>get apiService and your own HTTP service interface</li>
-</ul>
-
-<h3 id="a-proper-entity-class">a proper entity class</h3>
-
-<p>Define your own entity class which extends <code>Entity</code> class.</p>
-
-<p>Demo App provides an entity class named <code>User</code>:</p>
-
-<pre><code>@JsonIgnoreProperties(ignoreUnknown = true) public class User extends Entity implements Account {
-
-  public Integer id;
-  public String phone;
-  public String nickname;
-  public String avatar;
-  public String token;
-
-  public User() {
-
-  }
-……
-</code></pre>
-
-<h3 id="get-retrofitbuilder-with-baseurl">get RetrofitBuilder with baseUrl</h3>
-
-<p>You should get the <code>RetrofitBuilder</code> in your Application class which extends <code>StarterKitApp</code>.</p>
-
-<p>In demo App the Application Class is <code>DemoApp</code>:</p>
-
-<pre><code>public class DemoApp extends StarterKitApp {
-……
-</code></pre>
-
-<p><code>DemoApp</code> is a base class for those who need to maintain global application state,in which we get <code>RetrofitBuilder</code>:</p>
-
-<pre><code> @Override public void onCreate() {
-
-    // common config
-    ……
-    super.onCreate();
-  ……
-    // init api service
-    new RetrofitBuilder.Builder()
-        .accept(Profile.API_ACCEPT)
-        .baseUrl(Profile.API_ENDPOINT)
-        .build();
-  ……
-  }
-</code></pre>
-
-<p>baseUrl <code>API_ENDPOINT</code> is in <code>Profile</code> interface:</p>
-
-<pre><code>public interface Profile {
-
-  String API_ENDPOINT = &quot;http://fakerapi.qiji.tech&quot;;
-  ……
-</code></pre>
-
-<h3 id="get-apiservice-and-your-own-http-service-interface">get ApiService and your own HTTP service interface</h3>
-
-<p>Retrofit turns your HTTP API into a Java interface,so write your own HTTP service interface using the defined entity:</p>
-
-<pre><code>public interface AuthService {
-
-  /**
-   * Login Interface
-   *
-   * @param phone 
-   * @param password 
-   * @return Call
-   */
-  @FormUrlEncoded @POST(&quot;/auth/login&quot;) Call&lt;User&gt; login(
-      @Field(&quot;phone&quot;) String phone,
-      @Field(&quot;password&quot;) String password);
-
-  @GET(&quot;/user/profile&quot;) Call&lt;User&gt; profile();
-}
-</code></pre>
-
-<p>ApiService is defined to get your own HTTP service or other HTTP service with <code>retrofit</code>:</p>
-
-<pre><code>public class ApiService {
-
-  // create your HTTP interface with retrofit
-  public static AuthService createAuthService() {
-    return retrofit().create(AuthService.class);
-  }
-  
-  // create other HTTP interface with retrofit
-  public static FeedService createFeedService() {
-    return retrofit().create(FeedService.class);
-  }
-
-  // get retrofit
-  private static Retrofit retrofit() {
-    return RetrofitBuilder.get().retrofit();
-  }
-}
-</code></pre>
-
-<h2 id="using-starternetworkactivity">Using StarterNetworkActivity</h2>
-
-<p>Define your own activity extends <code>StarterNetworkActivity</code>：</p>
-
-<pre><code>public class LoginActivity extends StarterNetworkActivity&lt;User&gt; {
-……
-</code></pre>
-
-<p>Next, get defined HTTP service interface in method <code>onCreate</code>:</p>
-
-<pre><code>……
- private AuthService mAuthService;
-
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_login);
-
-    mAuthService = ApiService.createAuthService();
-……
-</code></pre>
-
-<p>The following override callbacks should be paid attention to:</p>
-
-<pre><code>  // call before request
-  @Override public void startRequest() {
-    showHud(“Logining...&quot;);
-  }
-
-  // call after request success with your defined entity class
-  @Override public void respondSuccess(User data) {
-    AccountManager.store(data);
-    Snackbar.make(getWindow().getDecorView(), “Login Success”, Snackbar.LENGTH_SHORT).show();
-    Intent upIntent = NavUtils.getParentActivityIntent(this);
-    NavUtils.navigateUpTo(this, upIntent);
-  }
-  
-  // call when request end
-  @Override public void endRequest() {
-    dismissHud();
-  }
-</code></pre>
-
-<p>That&rsquo;s all.</p>
-
+			<hr>
+			
 
 			<aside class="copyright" role="note">
 				
@@ -395,57 +236,6 @@
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
 			</aside>
-
-			<footer class="footer">
-				
-
-<nav class="pagination" aria-label="Footer">
-  <div class="previous">
-  
-      <a href="http://chiakimayuzumi.github.io/apidemos/textswitcher/" title="TextSwitcher 使用和源码分析">
-        <span class="direction">
-          Previous
-        </span>
-        <div class="page">
-          <div class="button button-previous" role="button" aria-label="Previous">
-            <i class="icon icon-back"></i>
-          </div>
-          <div class="stretch">
-            <div class="title">
-              TextSwitcher 使用和源码分析
-            </div>
-          </div>
-        </div>
-      </a>
-  
-  </div>
-
-  <div class="next">
-  
-      <a href="http://chiakimayuzumi.github.io/others/setupwithviewpager/" title="setupWithViewPager()后到底发生了什么？">
-        <span class="direction">
-          Next
-        </span>
-        <div class="page">
-          <div class="stretch">
-            <div class="title">
-              setupWithViewPager()后到底发生了什么？
-            </div>
-          </div>
-          <div class="button button-next" role="button" aria-label="Next">
-            <i class="icon icon-forward"></i>
-          </div>
-        </div>
-      </a>
-  
-  </div>
-</nav>
-
-
-
-
-
-			</footer>
 		</div>
 	</article>
 

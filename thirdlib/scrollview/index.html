@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>ObservableScrollView分析 —— ObservableScrollView 源码分析 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/thirdlib/scrollview/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/thirdlib/scrollview/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        ObservableScrollView分析 —— ObservableScrollView 源码分析
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>ObservableScrollView分析 —— ObservableScrollView 源码分析 </h1>
+
+			
+
+<h2 id="概述">概述</h2>
+
+<p>前面的章节，我们主要介绍了如何利用开源库 ObservableScrollView 来实现出各种我们需要的滚动效果的实例和实现代码，却一直没有分析过在实现过程中所使用的一系列 <code>ObservablexxxView</code> 的源代码，今天我们就来看看，在开源库中 ObservableScrollView 的源码。</p>
+
+<p>ObservableScrollView 关系图如下：
+<a href="http://blog.qiji.tech/wp-content/uploads/2016/05/ObservableScrollView-源码分析.png"><img src="http://blog.qiji.tech/wp-content/uploads/2016/05/ObservableScrollView-源码分析.png" alt="ObservableScrollView 源码分析" /></a></p>
+
+<p>由图可知：ObservableScrollView 继承自 ScrollView 并实现 Scrollable 接口，与此同时，ObservableScrollView 还持有四个类的引用，这四个类分别是：ObservableScrollViewCallbacks、ScrollState、ViewGroup 和 MotionEvent，其中：</p>
+
+<p>ObservableScrollViewCallbacks 是开源库所定义的一个回调接口；</p>
+
+<p>ScrollState 是一个枚举类，表示了滑动的三个状态：<code>STOP</code>、<code>UP</code> 和 <code>DOWN</code>；</p>
+
+<p>ViewGroup 用于在 Touch 事件拦截的过程中，指定父类 View；</p>
+
+<p>当用户触摸屏幕时则会产生一个 MotionEvent 对象，在 重写 <code>onTouchEvent()</code> 方法和 <code>onInterceptTouchEvent()</code> 方法时，都需要传入 MotionEvent 参数。</p>
+
+<h2 id="scrollable">Scrollable</h2>
+
+<p>该接口的方法已经在上一节中详细描述了，接下来我们直接看在 ObservableScrollView 中是如何实现该接口的。</p>
+
+<h3 id="具体实现">具体实现</h3>
+
+<pre><code>@Override
+    public void setScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
+        mCallbacks = listener;
+    }
+
+    @Override
+    public void addScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
+        if (mCallbackCollection == null) {
+            mCallbackCollection = new ArrayList&lt;&gt;();
+        }
+        mCallbackCollection.add(listener);
+    }
+
+    @Override
+    public void removeScrollViewCallbacks(ObservableScrollViewCallbacks listener) {
+        if (mCallbackCollection != null) {
+            mCallbackCollection.remove(listener);
+        }
+    }
+
+    @Override
+    public void clearScrollViewCallbacks() {
+        if (mCallbackCollection != null) {
+            mCallbackCollection.clear();
+        }
+    }
+    
+    @Override
+    public void setTouchInterceptionViewGroup(ViewGroup viewGroup) {
+        mTouchInterceptionViewGroup = viewGroup;
+    }
+
+    @Override
+    public void scrollVerticallyTo(int y) {
+        scrollTo(0, y);
+    }
+
+    @Override
+    public int getCurrentScrollY() {
+        return mScrollY;
+    }
+</code></pre>
+
+<p>与上一节中 ObservableRecyclerView 的实现方法不同的是  <code>scrollVerticallyTo()</code> 方法，该方法更为简洁，因为它可以直接调用继承自 ScrollView 的方法 <code>scrollTo()</code>。</p>
+
+<h2 id="observablescrollviewcallbacks">ObservableScrollViewCallbacks</h2>
+
+<p>该接口的方法已经在上一节中详细描述了，接下来我们直接看在 ObservableScrollView 中是如何实现该接口的。</p>
+
+<h3 id="具体实现-1">具体实现</h3>
+
+<pre><code>@Override
+  protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+    super.onScrollChanged(l, t, oldl, oldt);
+    if (hasNoCallbacks()) {
+      return;
+    }
+    if (getChildCount() &gt; 0) {
+      int firstVisiblePosition = getChildAdapterPosition(getChildAt(0));
+      int lastVisiblePosition = getChildAdapterPosition(getChildAt(getChildCount() - 1));
+      for (int i = firstVisiblePosition, j = 0; i &lt;= lastVisiblePosition; i++, j++) {
+        int childHeight = 0;
+        View child = getChildAt(j);
+        if (child != null) {
+          if (mChildrenHeights.indexOfKey(i) &lt; 0 || (child.getHeight() != mChildrenHeights.get(i))) {
+            childHeight = child.getHeight();
+          }
+        }
+        mChildrenHeights.put(i, childHeight);
+      }
+
+      View firstVisibleChild = getChildAt(0);
+      if (firstVisibleChild != null) {
+        if (mPrevFirstVisiblePosition &lt; firstVisiblePosition) {
+          // scroll down
+          int skippedChildrenHeight = 0;
+          if (firstVisiblePosition - mPrevFirstVisiblePosition != 1) {
+            for (int i = firstVisiblePosition - 1; i &gt; mPrevFirstVisiblePosition; i--) {
+              if (0 &lt; mChildrenHeights.indexOfKey(i)) {
+                skippedChildrenHeight += mChildrenHeights.get(i);
+              } else {
+                // Approximate each item's height to the first visible child.
+                // It may be incorrect, but without this, scrollY will be broken
+                // when scrolling from the bottom.
+                skippedChildrenHeight += firstVisibleChild.getHeight();
+              }
+            }
+          }
+          mPrevScrolledChildrenHeight += mPrevFirstVisibleChildHeight + skippedChildrenHeight;
+          mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
+        } else if (firstVisiblePosition &lt; mPrevFirstVisiblePosition) {
+          // scroll up
+          int skippedChildrenHeight = 0;
+          if (mPrevFirstVisiblePosition - firstVisiblePosition != 1) {
+            for (int i = mPrevFirstVisiblePosition - 1; i &gt; firstVisiblePosition; i--) {
+              if (0 &lt; mChildrenHeights.indexOfKey(i)) {
+                skippedChildrenHeight += mChildrenHeights.get(i);
+              } else {
+                // Approximate each item's height to the first visible child.
+                // It may be incorrect, but without this, scrollY will be broken
+                // when scrolling from the bottom.
+                skippedChildrenHeight += firstVisibleChild.getHeight();
+              }
+            }
+          }
+          mPrevScrolledChildrenHeight -= firstVisibleChild.getHeight() + skippedChildrenHeight;
+          mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
+        } else if (firstVisiblePosition == 0) {
+          mPrevFirstVisibleChildHeight = firstVisibleChild.getHeight();
+          mPrevScrolledChildrenHeight = 0;
+        }
+        if (mPrevFirstVisibleChildHeight &lt; 0) {
+          mPrevFirstVisibleChildHeight = 0;
+        }
+        mScrollY = mPrevScrolledChildrenHeight - firstVisibleChild.getTop() + getPaddingTop();
+        mPrevFirstVisiblePosition = firstVisiblePosition;
+
+        dispatchOnScrollChanged(mScrollY, mFirstScroll, mDragging);
+        if (mFirstScroll) {
+          mFirstScroll = false;
+        }
+
+        if (mPrevScrollY &lt; mScrollY) {
+          //down
+          mScrollState = ScrollState.UP;
+        } else if (mScrollY &lt; mPrevScrollY) {
+          //up
+          mScrollState = ScrollState.DOWN;
+        } else {
+          mScrollState = ScrollState.STOP;
+        }
+        mPrevScrollY = mScrollY;
+      }
+    }
+  }
+</code></pre>
+
+<p>分析详解可以参考上一节的方法。</p>
+
+<h2 id="observablescrollview-其他重要方法">ObservableScrollView 其他重要方法</h2>
+
+<ul>
+<li>onRestoreInstanceState(Parcelable state)</li>
+<li>onSaveInstanceState()</li>
+<li>onScrollChanged(int l, int t, int oldl, int oldt)</li>
+<li>onInterceptTouchEvent(MotionEvent ev)</li>
+<li>onTouchEvent(MotionEvent ev)</li>
+<li>getChildAdapterPosition(View child)
+自己的方法：</li>
+<li>dispatchOnDownMotionEvent()</li>
+<li>dispatchOnScrollChanged(int scrollY, boolean firstScroll, boolean dragging)</li>
+<li>dispatchOnUpOrCancelMotionEvent(ScrollState scrollState)</li>
+<li>hasNoCallbacks()
+以及一个内部类：<code>SavedState</code></li>
+</ul>
+
+<h3 id="保存状态">保存状态</h3>
+
+<p><code>onRestoreInstanceState()</code> 和 <code>onSaveInstanceState()</code> 以及内部类 <code>SavedState</code> 完成一些临时性的状态的保存工作，需要保存的属性如下：</p>
+
+<pre><code>private int mPrevScrollY;
+private int mScrollY;
+</code></pre>
+
+<p>在某个时刻 Activity 因为系统回收资源的问题要被杀掉，通过 onSaveInstanceState 将有机会保存其用户界面状态，使得将来用户返回到 Activity 时能通过  onCreate(Bundle) 或者 onRestoreInstanceState(Bundle) 恢复界面的状态。</p>
+
+<h3 id="onscrollchanged">onScrollChanged</h3>
+
+<p>onScrollChanged(int l, int t, int oldl, int oldt)
+重写 View 中的方法，代码如下：</p>
+
+<pre><code>@Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (hasNoCallbacks()) {
+            return;
+        }
+        mScrollY = t;
+
+        dispatchOnScrollChanged(t, mFirstScroll, mDragging);
+        if (mFirstScroll) {
+            mFirstScroll = false;
+        }
+
+        if (mPrevScrollY &lt; t) {
+            mScrollState = ScrollState.UP;
+        } else if (t &lt; mPrevScrollY) {
+            mScrollState = ScrollState.DOWN;
+        }
+        mPrevScrollY = t;
+    }
+</code></pre>
+
+<p>从上面的代码我们可以得知：
+1、没有设置回调的话，直接返回，不会将触摸事件进行分发；
+2、如果 <code>mPrevScrollY</code> 小于 <code>t</code>，则滚动状态为 <code>UP</code>，如果 <code>mPrevScrollY</code> 大于 <code>t</code>，则滚动状态为 <code>DOWN</code>。</p>
+
+<h3 id="事件分发">事件分发</h3>
+
+<p><code>onInterceptTouchEvent()</code> 和 <code>onTouchEvent()</code> 重写了 ViegGroup 中的方法，前者完成对触摸事件的拦截，如果检测到手指按下，则调用方法<code>dispatchOnDownMotionEvent()</code>。在方法 <code>dispatchOnDownMotionEvent()</code>中，对事件进行处理，处理方式为：如果设置了回调，就调用回调方法中的<code>onDownMotionEvent()</code> 方法（具体是什么操作需要用户自己在使用时实现），如果存放回调接口的容器不为零，将遍历容器中的每一个接口，调用每个接口的 <code>onDownMotionEvent()</code> 方法。
+<code>onTouchEvent()</code> 方法中，如果检测到触摸事件被取消，则调用<code>dispatchOnUpOrCancelMotionEvent()</code> 方法，跟上面的<code>dispatchOnDownMotionEvent()</code>方法类似，也会调用回调方法中的<code>onUpOrCancelMotionEvent()</code> 方法，或者遍历容器。
+而当检测到触摸事件为 <code>MOVE</code> 时，情况依然复杂，我们看代码：</p>
+
+<pre><code>case MotionEvent.ACTION_MOVE:
+                if (mPrevMoveEvent == null) {
+                    mPrevMoveEvent = ev;
+                }
+                float diffY = ev.getY() - mPrevMoveEvent.getY();
+                mPrevMoveEvent = MotionEvent.obtainNoHistory(ev);
+                if (getCurrentScrollY() - diffY &lt;= 0) {
+                    // Can't scroll anymore.
+
+                    if (mIntercepted) {
+                        // Already dispatched ACTION_DOWN event to parents, so stop here.
+                        return false;
+                    }
+
+                    // Apps can set the interception target other than the direct parent.
+                    final ViewGroup parent;
+                    if (mTouchInterceptionViewGroup == null) {
+                        parent = (ViewGroup) getParent();
+                    } else {
+                        parent = mTouchInterceptionViewGroup;
+                    }
+
+                    // Get offset to parents. If the parent is not the direct parent,
+                    // we should aggregate offsets from all of the parents.
+                    float offsetX = 0;
+                    float offsetY = 0;
+                    for (View v = this; v != null &amp;&amp; v != parent; v = (View) v.getParent()) {
+                        offsetX += v.getLeft() - v.getScrollX();
+                        offsetY += v.getTop() - v.getScrollY();
+                    }
+                    final MotionEvent event = MotionEvent.obtainNoHistory(ev);
+                    event.offsetLocation(offsetX, offsetY);
+
+                    if (parent.onInterceptTouchEvent(event)) {
+                        mIntercepted = true;
+
+                        // If the parent wants to intercept ACTION_MOVE events,
+                        // we pass ACTION_DOWN event to the parent
+                        // as if these touch events just have began now.
+                        event.setAction(MotionEvent.ACTION_DOWN);
+
+                        // Return this onTouchEvent() first and set ACTION_DOWN event for parent
+                        // to the queue, to keep events sequence.
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                parent.dispatchTouchEvent(event);
+                            }
+                        });
+                        return false;
+                    }
+                
+                    return super.onTouchEvent(ev);
+                }
+                break;
+</code></pre>
+
+<p>在该方法中，<code>mTouchInterceptionViewGroup</code> 将设置好的拦截 View 赋值给 <code>parent</code>，如果没有设置，则自动赋值当前 View 的父类给 <code>parent</code>。</p>
+
+<p>如果父类已经将该事件拦截，则返回 false，并且启动线程调用父类的 <code>dispatchTouchEvent()</code> 方法。</p>
+
+<p>ObservableScrollView 的源码分析到这里也就差不多了，通过阅读 ObservableScrollView 的源码，跟上一节的 ObservableRecyclerView 源码进行了对比，也让我再一次了解到了 RecyclerView 跟 ScrollView 的不同之处。</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/recyclerview/" title="ObservableScrollView分析 —— ObservableRecyclerView 源码分析">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— ObservableRecyclerView 源码分析
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/header/" title="ObservableScrollView分析 —— Sticky header 顶部固定">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— Sticky header 顶部固定
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

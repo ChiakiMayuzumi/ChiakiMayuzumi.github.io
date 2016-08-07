@@ -8,18 +8,18 @@
   <head lang="en-us">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
-    <title>Using StarterNetworkActivity to make easier HTTP request - ChiakiMayuzumi</title>
+    <title>Apidemos - ChiakiMayuzumi</title>
     <meta name="generator" content="Hugo 0.15" />
 
     
     <meta name="description" content="A material design theme for documentations.">
     
-    <link rel="canonical" href="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/apidemos/">
     
     <meta name="author" content="ChiakiMayuzumi">
     
 
-    <meta property="og:url" content="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/apidemos/">
     <meta property="og:title" content="ChiakiMayuzumi">
     <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
     <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
@@ -68,11 +68,12 @@
     <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
 
     
+    <link href="http://chiakimayuzumi.github.io/apidemos/index.xml" rel="alternate" type="application/rss+xml" title="ChiakiMayuzumi" />
+    <link href="http://chiakimayuzumi.github.io/apidemos/index.xml" rel="feed" type="application/rss+xml" title="ChiakiMayuzumi" />
+    
 
   </head>
   <body class="palette-primary-light red palette-accent-light green">
-
-
 
 
 <div class="backdrop">
@@ -93,7 +94,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Using StarterNetworkActivity to make easier HTTP request
+        Apidemo
       </div>
     </div>
 
@@ -213,178 +214,27 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Using StarterNetworkActivity to make easier HTTP request </h1>
+			<h1>Pages in Apidemo</h1>
 
 			
+			<a href="http://chiakimayuzumi.github.io/apidemos/expandablelistview/" title="ExpandableListView的继承关系和设计模式">
+				<h2>ExpandableListView的继承关系和设计模式</h2>
+			</a>
 
-<p><a href="https://github.com/qijitech/android-starter-kit">android-starter-kit</a></p>
+			<br>
+			继承关系 ExpandableListView 继承关系如下图： 关于ExpandableListView 的用法可以参考ApiDemos的分析文章： [ApiDemos] ExpandableListActivity 下面来分析一下 ExpandableListView 从继承类中得到了哪些接口。 继承自 Listview 中的接口： FixedViewInfo（用来在列表内展现一个固定位置视图） 继承自AbsListView中的接口： SelectionBoundsAdjuster（允许当前列表项的顶级视图实现这个接口去修改它的展示的边界区域） RecyclerListener（当一个 View 由于 ListView 的滑动被系统回收到 RecycleBin 的 mScrapViews 数组时会调用 RecyclerListener 中的 onMovedToScrapHeap 方法） OnScrollListener（ Listview 分批加载用到） MultiChoiceModeListener（监听器来帮助开发者进行多选处理） LayoutParams（相当于一个 Layout 的信息包，封装了 Layout 的位置、高、宽等信息） 继承自AdapterView的接口： AdapterContextMenuInfo（当显示 AdapterView 的上下文菜单时为 onCreateContextMenu 回调函数提供的额外的菜单信息） OnItemClickListener（使用 ListView 的时候为 ListView 添加一个响应事件） OnItemLongClickListener（长按响应） 继承自ViewGroup的接口： MarginLayoutParams（用于定义和边缘的空白） OnHierarchyChangeListener（监听 ViewGroup 并包括其继承者之中的增加和删除孩子的情况） ExpandableListAdapter 一个接口，将基础数据链接到一个 ExpandableListView。 此接口的实施将提供访问Child的数据（由组分类），并实例化的 Child 和 Group。 重要方法： getChildId (int groupPosition, int childPosition) 获取与在给定组给予孩子相关的数据。 getChildrenCount
 
-<p><code>android-starter-kit</code> is a fast development kit for Android developer,and this topic describes how to use <code>StarterNetworkActivity</code> to make your new activity’s HTTP requests easier.</p>
+			<hr>
+			
+			<a href="http://chiakimayuzumi.github.io/apidemos/textswitcher/" title="TextSwitcher 使用和源码分析">
+				<h2>TextSwitcher 使用和源码分析</h2>
+			</a>
 
-<h2 id="overview">Overview</h2>
+			<br>
+			代码地址 github TextSwitcher介绍 在 Java doc 中 TextSwitcher 是这样被描述的： Specialized ViewSwitcher that contains only children of type TextView. A TextSwitcher is useful to animate a label on screen. Whenever setText(CharSequence) is called, TextSwitcher animates the current text out and animates the new text in. 也就是说，TextSwitcher： 有个 TextView 子视图 在文本更新时，能够让旧文本淡出，新文本淡入，从而呈现平滑切换的动画效果 TextSwitcher使用方法 下面通过最上面的简单代码来讲述如何使用 TestSwitcher 首先，在 layout 中添加一个 TextSwitcher 的控件： &lt;TextSwitcher android:id=&quot;@+id/textSwitcher&quot; android:layout_width=&quot;match_parent&quot; android:layout_height=&quot;wrap_content&quot; android:onClick=&quot;next&quot; /&gt; 然后在 MainActivity 中进行 ViewFactory 的设置（用于生产视图）： textSwitcher.setFactory(new ViewFactory()
 
-<p>To make the HTTP requests, we could use some third-party libraries such as <code>retrofit 2.0</code>,which is known as a type-safe HTTP client for Android and Java.</p>
-
-<p><code>android-starter-kit</code> simply encapsulates <code>retrofit 2.0</code> in it so if you are familiar with <code>retrofit 2.0</code>,it won’t be difficult for you to use <code>StarterNetworkActivity</code>.</p>
-
-<h2 id="how-to-use">How to use</h2>
-
-<p>In <code>android-starter-kit</code> demo App ,<code>LoginActivity</code> shows how to use <code>StarterNetworkActivity</code>,so let’s see the source code in :</p>
-
-<pre><code>  com.smartydroid.android.kit.demo.ui.activity.LoginActivity
-</code></pre>
-
-<h2 id="preparations">Preparations</h2>
-
-<p>Preparations must be done before using <code>StarterNetworkActivity</code>,which contains:</p>
-
-<ul>
-<li>a proper entity class</li>
-<li>get RetrofitBuilder with baseUrl</li>
-<li>get apiService and your own HTTP service interface</li>
-</ul>
-
-<h3 id="a-proper-entity-class">a proper entity class</h3>
-
-<p>Define your own entity class which extends <code>Entity</code> class.</p>
-
-<p>Demo App provides an entity class named <code>User</code>:</p>
-
-<pre><code>@JsonIgnoreProperties(ignoreUnknown = true) public class User extends Entity implements Account {
-
-  public Integer id;
-  public String phone;
-  public String nickname;
-  public String avatar;
-  public String token;
-
-  public User() {
-
-  }
-……
-</code></pre>
-
-<h3 id="get-retrofitbuilder-with-baseurl">get RetrofitBuilder with baseUrl</h3>
-
-<p>You should get the <code>RetrofitBuilder</code> in your Application class which extends <code>StarterKitApp</code>.</p>
-
-<p>In demo App the Application Class is <code>DemoApp</code>:</p>
-
-<pre><code>public class DemoApp extends StarterKitApp {
-……
-</code></pre>
-
-<p><code>DemoApp</code> is a base class for those who need to maintain global application state,in which we get <code>RetrofitBuilder</code>:</p>
-
-<pre><code> @Override public void onCreate() {
-
-    // common config
-    ……
-    super.onCreate();
-  ……
-    // init api service
-    new RetrofitBuilder.Builder()
-        .accept(Profile.API_ACCEPT)
-        .baseUrl(Profile.API_ENDPOINT)
-        .build();
-  ……
-  }
-</code></pre>
-
-<p>baseUrl <code>API_ENDPOINT</code> is in <code>Profile</code> interface:</p>
-
-<pre><code>public interface Profile {
-
-  String API_ENDPOINT = &quot;http://fakerapi.qiji.tech&quot;;
-  ……
-</code></pre>
-
-<h3 id="get-apiservice-and-your-own-http-service-interface">get ApiService and your own HTTP service interface</h3>
-
-<p>Retrofit turns your HTTP API into a Java interface,so write your own HTTP service interface using the defined entity:</p>
-
-<pre><code>public interface AuthService {
-
-  /**
-   * Login Interface
-   *
-   * @param phone 
-   * @param password 
-   * @return Call
-   */
-  @FormUrlEncoded @POST(&quot;/auth/login&quot;) Call&lt;User&gt; login(
-      @Field(&quot;phone&quot;) String phone,
-      @Field(&quot;password&quot;) String password);
-
-  @GET(&quot;/user/profile&quot;) Call&lt;User&gt; profile();
-}
-</code></pre>
-
-<p>ApiService is defined to get your own HTTP service or other HTTP service with <code>retrofit</code>:</p>
-
-<pre><code>public class ApiService {
-
-  // create your HTTP interface with retrofit
-  public static AuthService createAuthService() {
-    return retrofit().create(AuthService.class);
-  }
-  
-  // create other HTTP interface with retrofit
-  public static FeedService createFeedService() {
-    return retrofit().create(FeedService.class);
-  }
-
-  // get retrofit
-  private static Retrofit retrofit() {
-    return RetrofitBuilder.get().retrofit();
-  }
-}
-</code></pre>
-
-<h2 id="using-starternetworkactivity">Using StarterNetworkActivity</h2>
-
-<p>Define your own activity extends <code>StarterNetworkActivity</code>：</p>
-
-<pre><code>public class LoginActivity extends StarterNetworkActivity&lt;User&gt; {
-……
-</code></pre>
-
-<p>Next, get defined HTTP service interface in method <code>onCreate</code>:</p>
-
-<pre><code>……
- private AuthService mAuthService;
-
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_login);
-
-    mAuthService = ApiService.createAuthService();
-……
-</code></pre>
-
-<p>The following override callbacks should be paid attention to:</p>
-
-<pre><code>  // call before request
-  @Override public void startRequest() {
-    showHud(“Logining...&quot;);
-  }
-
-  // call after request success with your defined entity class
-  @Override public void respondSuccess(User data) {
-    AccountManager.store(data);
-    Snackbar.make(getWindow().getDecorView(), “Login Success”, Snackbar.LENGTH_SHORT).show();
-    Intent upIntent = NavUtils.getParentActivityIntent(this);
-    NavUtils.navigateUpTo(this, upIntent);
-  }
-  
-  // call when request end
-  @Override public void endRequest() {
-    dismissHud();
-  }
-</code></pre>
-
-<p>That&rsquo;s all.</p>
-
+			<hr>
+			
 
 			<aside class="copyright" role="note">
 				
@@ -395,57 +245,6 @@
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
 			</aside>
-
-			<footer class="footer">
-				
-
-<nav class="pagination" aria-label="Footer">
-  <div class="previous">
-  
-      <a href="http://chiakimayuzumi.github.io/apidemos/textswitcher/" title="TextSwitcher 使用和源码分析">
-        <span class="direction">
-          Previous
-        </span>
-        <div class="page">
-          <div class="button button-previous" role="button" aria-label="Previous">
-            <i class="icon icon-back"></i>
-          </div>
-          <div class="stretch">
-            <div class="title">
-              TextSwitcher 使用和源码分析
-            </div>
-          </div>
-        </div>
-      </a>
-  
-  </div>
-
-  <div class="next">
-  
-      <a href="http://chiakimayuzumi.github.io/others/setupwithviewpager/" title="setupWithViewPager()后到底发生了什么？">
-        <span class="direction">
-          Next
-        </span>
-        <div class="page">
-          <div class="stretch">
-            <div class="title">
-              setupWithViewPager()后到底发生了什么？
-            </div>
-          </div>
-          <div class="button button-next" role="button" aria-label="Next">
-            <i class="icon icon-forward"></i>
-          </div>
-        </div>
-      </a>
-  
-  </div>
-</nav>
-
-
-
-
-
-			</footer>
 		</div>
 	</article>
 

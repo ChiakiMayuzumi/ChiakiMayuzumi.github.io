@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>setupWithViewPager()后到底发生了什么？ - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/others/setupwithviewpager/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/others/setupwithviewpager/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        setupWithViewPager()后到底发生了什么？
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>setupWithViewPager()后到底发生了什么？ </h1>
+
+			
+
+<p>相信使用过 TabLayout 和 ViewPager 的人对这个方法一定不陌生了，当我们为 ViewPager 设置好 adapter 后，需要调用 TabLayout 的 <code>setupWithViewPager</code> 方法将 ViewPager 的引用传递进去：</p>
+
+<pre><code>mViewPager.setAdapter(mAdapter);
+mTabLayout.setupWithViewPager(mViewPager);
+</code></pre>
+
+<p>那么接下来问题来了，为什么 <code>setupWithViewPager</code> 之后，ViewPager 和 TabLayout 就能关联起来呢？并且 ViewPager 设置的 adapter 中的 <code>PageTitle</code>数据就能正确反应到每一个 Tab 中去呢？为了搞明白这些背后的操作，我认为我们有必要去查看方法 <code>setupWithViewPager</code> 的源代码。</p>
+
+<h1 id="分析-setupwithviewpager-的原理">分析 setupWithViewPager() 的原理</h1>
+
+<h2 id="方法源码">方法源码</h2>
+
+<p>方法如下：</p>
+
+<pre><code>  public void setupWithViewPager(@Nullable final ViewPager viewPager) {
+    if (mViewPager != null &amp;&amp; mPageChangeListener != null) {
+      mViewPager.removeOnPageChangeListener(mPageChangeListener);
+    }
+    if (viewPager != null) {
+      final PagerAdapter adapter = viewPager.getAdapter();
+      if (adapter == null) {
+        throw new IllegalArgumentException(&quot;ViewPager does not have a PagerAdapter set&quot;);
+      }
+      mViewPager = viewPager;
+
+      if (mPageChangeListener == null) {
+        mPageChangeListener = new TabLayoutOnPageChangeListener(this);
+      }
+      mPageChangeListener.reset();
+      viewPager.addOnPageChangeListener(mPageChangeListener);
+
+      setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager));
+
+      setPagerAdapter(adapter, true);
+    } else {
+
+      mViewPager = null;
+      setOnTabSelectedListener(null);
+      setPagerAdapter(null, true);
+    }
+  }
+</code></pre>
+
+<p>先看第一部分：</p>
+
+<pre><code>  if (mViewPager != null &amp;&amp; mPageChangeListener != null) {
+      mViewPager.removeOnPageChangeListener(mPageChangeListener);
+    }
+</code></pre>
+
+<p>如果已经设置过 ViewPager 了，并且也设置了PageChangeListener，则将它移除。</p>
+
+<p>再来第二部分：</p>
+
+<pre><code>  else {
+    mViewPager = null;
+    setOnTabSelectedListener(null);
+    setPagerAdapter(null, true);
+  }
+</code></pre>
+
+<p>如果传入了一个空的 ViewPager，就将 ViewPager，OnTabSelectedListener和PagerAdapter都设置为空。</p>
+
+<p>然后是第三部分：</p>
+
+<pre><code>    if (viewPager != null) {
+      final PagerAdapter adapter = viewPager.getAdapter();
+      if (adapter == null) {
+        throw new IllegalArgumentException(&quot;ViewPager does not have a PagerAdapter set&quot;);
+      }
+      mViewPager = viewPager;
+
+      if (mPageChangeListener == null) {
+        mPageChangeListener = new TabLayoutOnPageChangeListener(this);
+      }
+      mPageChangeListener.reset();
+      viewPager.addOnPageChangeListener(mPageChangeListener);
+
+      setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager));
+
+      setPagerAdapter(adapter, true);
+    }
+</code></pre>
+
+<p>如果 ViewPager 不为空，则将它赋值给 PagerAdapter 类型的引用 mViewPager。ViewPager 的 adapter 类型继承自 FragmentPagerAdapter，FragmentPagerAdapter 则是继承自 PagerAdapter，所以这样赋值是没有问题的。当adapter 为 <code>null</code> 抛出异常。</p>
+
+<p>将这个传入的 ViewPager 引用赋值给类私有变量 mViewPager；
+如果 TabLayoutOnPageChangeListener 为空，则新建一个 TabLayoutOnPageChangeListener ，调用 <code>reset</code> 方法，重设当前的滚动状态；
+调用 ViewPager 的 <code>addOnPageChangeListener</code> 方法，设置监听：setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager));</p>
+
+<p>最后设置setPagerAdapter(adapter, true)，整个方法就完成了，
+第一个参数就是 ViewPager 设置的 adapter 后面的参数留到下一节观察者模式讲解。</p>
+
+<h2 id="两个监听的实现类">两个监听的实现类</h2>
+
+<p>TabLayoutOnPageChangeListener 是一个监听，ViewPagerOnTabSelectedListener 是另一个监听。</p>
+
+<p>先来看看 TabLayoutOnPageChangeListener。主要处理的是 ViewPager 发生变化时处理回调（尤其是需要实现跟 TabLayout 的关联，也就是说，当 ViewPager 在滑动时，TabLayout 需要怎么变化）。</p>
+
+<p>它实现了 <code>ViewPager.OnPageChangeListener</code> 接口，需要实现三个方法：</p>
+
+<ul>
+<li>public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)，当当前页滚动时调用。</li>
+<li>public void onPageSelected(int position)，当一个新页面被选中时调用。
+重要方法：tabLayout.selectTab(tabLayout.getTabAt(position), updateIndicator)</li>
+<li>public void onPageScrollStateChanged(int state)，当滚动状态改变时调用。
+重要方法：tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator)</li>
+</ul>
+
+<p>还有一个非接口实现方法 <code>reset</code>，该接口重新设置了滚动状态：</p>
+
+<pre><code>  private void reset() {
+    mPreviousScrollState = mScrollState = SCROLL_STATE_IDLE;
+  }
+</code></pre>
+
+<p>而 ViewPagerOnTabSelectedListener 跟上一个监听相反，主要处理的是当 TabLayout 中的 Tab 发生点击事件时，ViewPager 需要怎么变化。它实现的是<code>TabLayout.OnTabSelectedListener</code> 接口，需要实现三个方法：</p>
+
+<ul>
+<li>public void onTabSelected(Tab tab)</li>
+<li>public void onTabUnselected(Tab tab)</li>
+<li>public void onTabReselected(Tab tab)</li>
+</ul>
+
+<p>在这里，只实现了第一个方法，源码如下：</p>
+
+<pre><code>  @Override
+  public void onTabSelected(TabLayout.Tab tab) {
+    mViewPager.setCurrentItem(tab.getPosition());
+  }
+</code></pre>
+
+<p>也就是当点击 TabLayout 的某个 tab 就将与之对应的那个 position 赋值给<code>setCurrentItem</code> 完成 ViewPager 的跳转。</p>
+
+<p>最后总结一下 <code>setupWithViewPager</code> 是如何让 ViewPager 跟自身 TabLayout 产生关联的：</p>
+
+<ul>
+<li>传入 ViewPager，为该 ViewPager 设监听 TabLayoutOnPageChangeListener，这样就使得 ViewPager 在滚动状态发生改变时，TabLayout 对应的有所改变</li>
+<li>然后为TabLayout自身设置ViewPagerOnTabSelectedListener 当 TabLayout 点击状态发生改变时，ViewPager 也有相应改变。</li>
+<li>最后，将 ViewPager 设置的 adapter 也设置给自己。</li>
+</ul>
+
+<h1 id="观察者模式的应用">观察者模式的应用</h1>
+
+<h2 id="继承关系">继承关系</h2>
+
+<p>继承关系图如下：</p>
+
+<p><a href="http://blog.qiji.tech/wp-content/uploads/2016/06/TabLayout-和-ViewPager-中的观察者模式-2.png"><img src="http://blog.qiji.tech/wp-content/uploads/2016/06/TabLayout-和-ViewPager-中的观察者模式-2.png" alt="TabLayout 和 ViewPager 中的观察者模式-2" /></a></p>
+
+<h2 id="分析">分析</h2>
+
+<p>接下来开始分析 TabLayout 和 ViewPager 中用到的观察者模式。
+PagerAdapter 是一个抽象类，其中包含有一个 DataSetObservable 和 DataSetObserver 的引用。</p>
+
+<p>PagerAdapter 中重要的方法是 <code>notifyDataSetChanged</code>，当我们向 adapter 中增添数据后，都会调用这个方法。</p>
+
+<pre><code>  public void notifyDataSetChanged() {
+    synchronized (this) {
+      if (mViewPagerObserver != null) {
+        mViewPagerObserver.onChanged();
+      }
+    }
+    mObservable.notifyChanged();
+  }
+</code></pre>
+
+<p>DataSetObservable 是 Observable<DataSetObserver> 的具体实现类：</p>
+
+<pre><code>  public class DataSetObservable extends Observable&lt;DataSetObserver&gt; {
+    public void notifyChanged() {
+      synchronized(mObservers) {
+        // since onChanged() is implemented by the app, it could do anything, including
+        // removing itself from {@link mObservers} - and that could cause problems if
+        // an iterator is used on the ArrayList {@link mObservers}.
+        // to avoid such problems, just march thru the list in the reverse order.
+        for (int i = mObservers.size() - 1; i &gt;= 0; i--) {
+          mObservers.get(i).onChanged();
+        }
+      }
+    }
+
+    public void notifyInvalidated() {
+      synchronized (mObservers) {
+        for (int i = mObservers.size() - 1; i &gt;= 0; i--) {
+          mObservers.get(i).onInvalidated();
+        }
+      }
+    }
+  }
+</code></pre>
+
+<p>而 DataSetObserver 是一个抽象类：</p>
+
+<pre><code>  public abstract class DataSetObserver {
+
+    public void onChanged() {
+      // Do nothing
+    }
+
+    public void onInvalidated() {
+      // Do nothing
+    }
+  }
+</code></pre>
+
+<p>当 DataSetObserver 和 DataSetObservable 关联起来后，调用 DataSetObservable 的 <code>notifyChanged</code> 方法时，会分别调用每一个 DataSetObserver 的 `onChanged 方法，达到通知的目的。</p>
+
+<p>DataSetObserver 有两个实现类，一个是 PagerAdapterObserver:</p>
+
+<pre><code>  private class PagerAdapterObserver extends DataSetObserver {
+    @Override
+    public void onChanged() {
+      populateFromPagerAdapter();
+    }
+
+    @Override
+    public void onInvalidated() {
+      populateFromPagerAdapter();
+    }
+  }
+</code></pre>
+
+<p>这个类位于 TabLayout 中，作用是当 <code>notifyChanged</code> 时，重新加载 TabLayout 的布局和数据，具体实现的方法为 <code>populateFromPagerAdapter</code>：</p>
+
+<pre><code>  private void populateFromPagerAdapter() {
+    removeAllTabs();
+
+    if (mPagerAdapter != null) {
+      final int adapterCount = mPagerAdapter.getCount();
+      for (int i = 0; i &lt; adapterCount; i++) {
+        addTab(newTab().setText(mPagerAdapter.getPageTitle(i)), false);
+      }
+
+      // Make sure we reflect the currently set ViewPager item
+      if (mViewPager != null &amp;&amp; adapterCount &gt; 0) {
+        final int curItem = mViewPager.getCurrentItem();
+        if (curItem != getSelectedTabPosition() &amp;&amp; curItem &lt; getTabCount()) {
+          selectTab(getTabAt(curItem));
+        }
+      }
+    } else {
+      removeAllTabs();
+    }
+  }
+</code></pre>
+
+<p>还有一个是位于 ViewPager 中的 PagerObserver 类：</p>
+
+<pre><code>  private class PagerObserver extends DataSetObserver {
+    @Override
+    public void onChanged() {
+      dataSetChanged();
+    }
+    @Override
+    public void onInvalidated() {
+      dataSetChanged();
+    }
+  }
+</code></pre>
+
+<p>具体实现方法是 <code>dataSetChanged</code>：</p>
+
+<pre><code>  void dataSetChanged() {
+    // This method only gets called if our observer is attached, so mAdapter is non-null.
+
+    final int adapterCount = mAdapter.getCount();
+    mExpectedAdapterCount = adapterCount;
+    boolean needPopulate = mItems.size() &lt; mOffscreenPageLimit * 2 + 1 &amp;&amp;
+            mItems.size() &lt; adapterCount;
+    int newCurrItem = mCurItem;
+
+    boolean isUpdating = false;
+    for (int i = 0; i &lt; mItems.size(); i++) {
+      final ItemInfo ii = mItems.get(i);
+      final int newPos = mAdapter.getItemPosition(ii.object);
+
+      if (newPos == PagerAdapter.POSITION_UNCHANGED) {
+        continue;
+      }
+
+      if (newPos == PagerAdapter.POSITION_NONE) {
+        mItems.remove(i);
+        i--;
+
+        if (!isUpdating) {
+          mAdapter.startUpdate(this);
+          isUpdating = true;
+        }
+
+        mAdapter.destroyItem(this, ii.position, ii.object);
+        needPopulate = true;
+
+        if (mCurItem == ii.position) {
+          // Keep the current item in the valid range
+          newCurrItem = Math.max(0, Math.min(mCurItem, adapterCount - 1));
+          needPopulate = true;
+        }
+        continue;
+      }
+
+      if (ii.position != newPos) {
+        if (ii.position == mCurItem) {
+          // Our current item changed position. Follow it.
+          newCurrItem = newPos;
+        }
+
+        ii.position = newPos;
+        needPopulate = true;
+      }
+    }
+
+    if (isUpdating) {
+      mAdapter.finishUpdate(this);
+    }
+
+    Collections.sort(mItems, COMPARATOR);
+
+    if (needPopulate) {
+      // Reset our known page widths; populate will recompute them.
+      final int childCount = getChildCount();
+      for (int i = 0; i &lt; childCount; i++) {
+        final View child = getChildAt(i);
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        if (!lp.isDecor) {
+          lp.widthFactor = 0.f;
+        }
+      }
+
+      setCurrentItemInternal(newCurrItem, false, true);
+      requestLayout();
+    }
+  }
+</code></pre>
+
+<p>具体的逻辑可以不用去看，注意到最后调用了 <code>requestLayout</code> 方法进行重新布局。</p>
+
+<p>这样，当 adapter 的 <code>notifyDataSetChanged</code> 方法被调用时，就会调用到 TabLayout 中的观察者 PagerAdapterObserver 的 <code>onChanged</code> 方法，进而通过 <code>populateFromPagerAdapter</code> 重新对 Tab 进行布局；并且调用到 ViewPager 中的观察者 PagerObserver 的 <code>onChanged</code> 方法，进而通过 <code>dataSetChanged</code> 重新对 ViewPager 进行布局；</p>
+
+<h2 id="注册">注册</h2>
+
+<p>最后还需要解决一个问题：观察者与被观察者是什么时候联系上的？也就是说，在整个流程中，观察者是如何注册到被观察者中去的？</p>
+
+<p>需要注意到的是 ViewPager 的 setAdapter方法：</p>
+
+<pre><code>  public void setAdapter(PagerAdapter adapter) {
+    if (mAdapter != null) {
+      mAdapter.setViewPagerObserver(null);
+      mAdapter.startUpdate(this);
+      for (int i = 0; i &lt; mItems.size(); i++) {
+        final ItemInfo ii = mItems.get(i);
+        mAdapter.destroyItem(this, ii.position, ii.object);
+      }
+      mAdapter.finishUpdate(this);
+      mItems.clear();
+      removeNonDecorViews();
+      mCurItem = 0;
+      scrollTo(0, 0);
+    }
+
+    final PagerAdapter oldAdapter = mAdapter;
+    mAdapter = adapter;
+    mExpectedAdapterCount = 0;
+
+    if (mAdapter != null) {
+      if (mObserver == null) {
+        mObserver = new PagerObserver();
+      }
+      mAdapter.setViewPagerObserver(mObserver);
+      mPopulatePending = false;
+      final boolean wasFirstLayout = mFirstLayout;
+      mFirstLayout = true;
+      mExpectedAdapterCount = mAdapter.getCount();
+      if (mRestoredCurItem &gt;= 0) {
+        mAdapter.restoreState(mRestoredAdapterState, mRestoredClassLoader);
+        setCurrentItemInternal(mRestoredCurItem, false, true);
+        mRestoredCurItem = -1;
+        mRestoredAdapterState = null;
+        mRestoredClassLoader = null;
+      } else if (!wasFirstLayout) {
+        populate();
+      } else {
+        requestLayout();
+      }
+    }
+
+    if (mAdapterChangeListener != null &amp;&amp; oldAdapter != adapter) {
+      mAdapterChangeListener.onAdapterChanged(oldAdapter, adapter);
+    }
+  }
+</code></pre>
+
+<p>需要注意的代码如下：</p>
+
+<pre><code>  if (mAdapter != null) {
+    if (mObserver == null) {
+      mObserver = new PagerObserver();
+    }
+    mAdapter.setViewPagerObserver(mObserver);
+</code></pre>
+
+<p>现在我们去 <code>setViewPagerObserver</code> 方法中看看：</p>
+
+<pre><code>  void setViewPagerObserver(DataSetObserver observer) {
+    synchronized (this) {
+      mViewPagerObserver = observer;
+    }
+  }
+</code></pre>
+
+<p>再看 TabLayout 中，当调用 <code>setupWithViewPager</code> 方法时，会调用一个方法 <code>setPagerAdapter</code>：</p>
+
+<pre><code>  private void setPagerAdapter(@Nullable final PagerAdapter adapter, final boolean addObserver) {
+    if (mPagerAdapter != null &amp;&amp; mPagerAdapterObserver != null) {
+      // If we already have a PagerAdapter, unregister our observer
+      mPagerAdapter.unregisterDataSetObserver(mPagerAdapterObserver);
+    }
+
+    mPagerAdapter = adapter;
+
+    if (addObserver &amp;&amp; adapter != null) {
+      // Register our observer on the new adapter
+      if (mPagerAdapterObserver == null) {
+        mPagerAdapterObserver = new PagerAdapterObserver();
+      }
+      adapter.registerDataSetObserver(mPagerAdapterObserver);
+    }
+
+    // Finally make sure we reflect the new adapter
+    populateFromPagerAdapter();
+  }
+</code></pre>
+
+<p>可以看到 <code>adapter.registerDataSetObserver(mPagerAdapterObserver)</code>方法被调用，完成了注册任务。</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/" title="Using StarterNetworkActivity to make easier HTTP request">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              Using StarterNetworkActivity to make easier HTTP request
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/blabla/factory/" title="设计模式-工厂模式">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              设计模式-工厂模式
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

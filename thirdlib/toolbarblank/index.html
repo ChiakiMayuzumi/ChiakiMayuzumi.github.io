@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>ObservableScrollView分析 —— Toolbar上的弹性空白 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/thirdlib/toolbarblank/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/thirdlib/toolbarblank/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        ObservableScrollView分析 —— Toolbar上的弹性空白
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>ObservableScrollView分析 —— Toolbar上的弹性空白 </h1>
+
+			
+
+<p>这一节主要说明了如何在 Toolbar 上方实现弹性空白布局，并给出在各个 View 上如何应用的实例，主要实例有：</p>
+
+<ul>
+<li>FlexibleSpaceToolbarScrollViewActivity</li>
+<li>FlexibleSpaceToolbarWebViewActivity</li>
+</ul>
+
+<h2 id="scrollview-实现弹性空白">ScrollView 实现弹性空白</h2>
+
+<h3 id="scrollview-布局">ScrollView 布局</h3>
+
+<h4 id="基本结构">基本结构</h4>
+
+<pre><code>&lt;FrameLayout&gt;
+  &lt;ObservableScrollView android:id=&quot;@+id/scroll&quot;&gt;
+    &lt;FrameLayout android:id=&quot;@+id/body&quot;&gt;
+      &lt;TextView/&gt;
+    &lt;/FrameLayout&gt;
+  &lt;/ObservableScrollView&gt;
+  &lt;View android:id=&quot;@+id/flexible_space&quot;/&gt;
+  &lt;Toolbar android:id=&quot;@+id/toolbar&quot;/&gt;
+  &lt;RelativeLayout android:paddingLeft=&quot;@dimen/toolbar_margin_start&quot;&gt;
+    &lt;TextView android:id=&quot;@+id/title&quot;/&gt;
+    &lt;LinearLayout android:orientation=&quot;vertical&quot;&gt;
+      &lt;View android:layout_height=&quot;?attr/actionBarSize&quot;/&gt;
+      &lt;View android:layout_height=&quot;@dimen/flexible_space_height&quot;/&gt;
+    &lt;/LinearLayout&gt;
+  &lt;/RelativeLayout&gt;
+&lt;/FrameLayout&gt;
+</code></pre>
+
+<p>看过之前章节的话一定知道，根布局 FrameLayout 可以实现分别移动其子布局的功能。
+第二个位于 ScrollView 中的 FrameLayout 布局 （<code>@id/body</code>）是主要的内容布局，如果需要的话，可以换成任何你想要的布局。这里我们就用一个 TextView 来充当当前布局的内容。</p>
+
+<p>View（<code>@id/flexible_space</code>）构成了一个背景不透明的弹性空白空间，在滚动时，该视图会随着Y轴坐标的改变而垂直滚动。</p>
+
+<p>Toolbar 只是一个普通的 Toolbar ，不过这个 Toolbar 没有设置标题。</p>
+
+<p>接下来的 RelativeLayout 和它的子布局比较复杂，首先，TextView（<code>@id/title</code>） 才是真正的 <code>title view</code> ，其他的布局（LinearLayout，view）都只是填充，因为在这个弹性空白的样式里，TextView 里面内容的字体大小（也就是标题的字体大小）会有所变化，所以它需要额外的空间。要达到这样的动画效果，可以使得 TextView 动画起来，因此其他的填充都应该在 TextView 的外面。</p>
+
+<p>想要了解其他的属性，可以自己在 app 里面查看相应的布局。</p>
+
+<pre><code>res/layout/activity_flexiblespacetoolbarscrollview.xml
+</code></pre>
+
+<h3 id="初始化">初始化</h3>
+
+<p>初始化开始，将 Toolbar 设置成为 ActionBar ，并让其显示返回（ <code>homeAsUp</code> ）箭头。</p>
+
+<pre><code>@Override
+protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_flexiblespacetoolbarscrollview);
+
+  setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+</code></pre>
+
+<p>得到这个 Activity 的标题并将它设置到 ID 为 <code>@id/title</code> 的 TextView。</p>
+
+<pre><code>mTitleView = (TextView) findViewById(R.id.title);
+  mTitleView.setText(getTitle());
+  setTitle(null);
+</code></pre>
+
+<p>然后初始化其他的视图和属性。</p>
+
+<pre><code>private View mFlexibleSpaceView;
+private View mToolbarView;
+private TextView mTitleView;
+private int mFlexibleSpaceHeight;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+  // 省略前面已经说明过的代码
+  mFlexibleSpaceView = findViewById(R.id.flexible_space);
+  mToolbarView = findViewById(R.id.toolbar);
+
+  final ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.scroll);
+  scrollView.setScrollViewCallbacks(this);
+
+  mFlexibleSpaceHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_height);
+  int flexibleSpaceAndToolbarHeight = mFlexibleSpaceHeight + getActionBarSize();
+
+  findViewById(R.id.body).setPadding(0, flexibleSpaceAndToolbarHeight, 0, 0);
+  mFlexibleSpaceView.getLayoutParams().height = flexibleSpaceAndToolbarHeight;
+}
+</code></pre>
+
+<p>也可以在 Activity 的声明后面添加 <code>implements ObservableScrollViewCallbacks</code> 来得到上面的方法。</p>
+
+<h3 id="动画">动画</h3>
+
+<p>使用 <code>onScrollChanged()</code> 方法产生需要的动画效果。我们必须要实现以下的代码：</p>
+
+<ul>
+<li>移动弹性空白空间</li>
+<li>移动并缩放标题（<code>title view</code>）</li>
+</ul>
+
+<h4 id="移动弹性空白空间">移动弹性空白空间</h4>
+
+<p>实现起来较为简单，只需要用 <code>scrollY</code>:</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  ViewHelper.setTranslationY(mFlexibleSpaceView, -scrollY);
+}
+</code></pre>
+
+<h3 id="缩放标题">缩放标题</h3>
+
+<p>需要思考的问题是如何改变字体的大小？直接在布局修改字体的 <code>size</code> 显然是不可以的，应该考虑用缩放的效果去实现字体大小的改变。</p>
+
+<p>缩放的值从 <code>1</code> 变化到 <code>1.x</code>，你可以改变这个 <code>.x</code> 的值，来达到你想要的缩放效果。或者可以使用弹性空白和 Toolbar 的高度来计算出一个最大的缩放值，也就是：</p>
+
+<pre><code>float maxScale = (float) (mFlexibleSpaceHeight - mToolbarView.getHeight()) / mToolbarView.getHeight();
+</code></pre>
+
+<p>缩放值（指的是 <code>.x</code> 值）从 0 变化到最大值 <code>maxScale</code>，可以这样来实现：</p>
+
+<pre><code>// 对scrollY的值进行限制
+int adjustedScrollY = (int) ScrollUtils.getFloat(scrollY, 0, mFlexibleSpaceHeight);
+
+// scrollY为0时，缩放值应该为最大
+// scrollY达到mFlexibleSpaceHeight的值时，缩放值应该为0 
+float scale = maxScale * ((float) mFlexibleSpaceHeight - adjustedScrollY) / mFlexibleSpaceHeight;
+</code></pre>
+
+<p>当缩放视图的时候，我们需要设置一个缩放的中心点，也就是 <code>pivotX</code> 和 <code>pivotY</code> 两个参数，应该设置为 <code>（0，0）</code> 。默认的缩放点如下图左，设置后的缩放点如下图右：
+<a href="http://blog.qiji.tech/wp-content/uploads/2016/05/滚动中心点设置.png"><img src="http://blog.qiji.tech/wp-content/uploads/2016/05/滚动中心点设置.png" alt="滚动中心点设置" /></a>
+先设置缩放中心点，然后改变缩放值：</p>
+
+<pre><code>// 设置标题的缩放中心点 (0, 0)
+ViewHelper.setPivotX(mTitleView, 0);
+ViewHelper.setPivotY(mTitleView, 0);
+
+// 缩放标题
+ViewHelper.setScaleX(mTitleView, 1 + scale);
+ViewHelper.setScaleY(mTitleView, 1 + scale);
+</code></pre>
+
+<h4 id="移动标题">移动标题</h4>
+
+<p>移动标题的实现较为复杂，我们先看下图：
+<a href="http://blog.qiji.tech/wp-content/uploads/2016/05/计算TextView的最大值.png"><img src="http://blog.qiji.tech/wp-content/uploads/2016/05/计算TextView的最大值.png" alt="计算TextView的最大值" /></a>
+最小的 <code>translationY</code> 明显应该为 0 ，需要思考的是如何得到最大的 <code>translationY</code> 值，从图中可以看出，最大的 <code>translationY</code> 可以由 <code>ht1 + hf - ht2</code> 计算得出，所以代码应该这样写：</p>
+
+<pre><code>int maxTitleTranslationY = mToolbarView.getHeight() + mFlexibleSpaceHeight - (int) (mTitleView.getHeight() * (1 + scale));
+</code></pre>
+
+<p>用 <code>scrollY</code> 来改变这个值，<code>scrollY</code> 应该被限定，并且早就被计算为 <code>adjustedScrollY</code> 值：</p>
+
+<pre><code> int titleTranslationY = (int) (maxTitleTranslationY * ((float) mFlexibleSpaceHeight - adjustedScrollY) / mFlexibleSpaceHeight);
+  ViewHelper.setTranslationY(mTitleView, titleTranslationY);
+</code></pre>
+
+<p>最后，将转换和缩放的代码完成：</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  ViewHelper.setTranslationY(mFlexibleSpaceView, -scrollY);
+
+  // 计算缩放值
+  int adjustedScrollY = (int) ScrollUtils.getFloat(scrollY, 0, mFlexibleSpaceHeight);
+  float maxScale = (float) (mFlexibleSpaceHeight - mToolbarView.getHeight()) / mToolbarView.getHeight();
+  float scale = maxScale * ((float) mFlexibleSpaceHeight - adjustedScrollY) / mFlexibleSpaceHeight;
+
+  // 设置标题的缩放中心点 (0, 0)
+  ViewHelper.setPivotX(mTitleView, 0);
+  ViewHelper.setPivotY(mTitleView, 0);
+
+  // 缩放标题
+  ViewHelper.setScaleX(mTitleView, 1 + scale);
+  ViewHelper.setScaleY(mTitleView, 1 + scale);
+
+  // 移动标题
+  int maxTitleTranslationY = mToolbarView.getHeight() + mFlexibleSpaceHeight - (int) (mTitleView.getHeight() * (1 + scale));
+  int titleTranslationY = (int) (maxTitleTranslationY * ((float) mFlexibleSpaceHeight - adjustedScrollY) / mFlexibleSpaceHeight);
+  ViewHelper.setTranslationY(mTitleView, titleTranslationY);
+}
+</code></pre>
+
+<h4 id="调整-title-的初始状态">调整 <code>title</code> 的初始状态</h4>
+
+<p>也许你会注意到，当页面初始启动的时候，标题会固定在屏幕的顶部，而我们需要的应该是一开始就让它呆在头部视图的最下面，并且应该是最大的字体。</p>
+
+<p>出现这样的情况是因为在刚开始进入页面时，<code>onScrollChanged()</code> 方法不会被调用，如果要改善，方法是在布局好 view 后立即调用 <code>onScrollChanged()</code>。你也可以通过使用 <code>ViewTreeObserver#addOnGlobalLayoutListener()</code> 处理这种布局方式。</p>
+
+<pre><code>@Override
+protected void onCreate(Bundle savedInstanceState) {
+  // 其他的初始化代码省略
+  ViewTreeObserver vto = mTitleView.getViewTreeObserver();
+  vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+    @Override
+    public void onGlobalLayout() {
+      if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.JELLY_BEAN) {
+        view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+      } else {
+        view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+      }
+      updateFlexibleSpaceText(scrollView.getCurrentScrollY());
+    }
+  });
+}
+
+@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  updateFlexibleSpaceText(scrollY);
+}
+
+private void updateFlexibleSpaceText(scrollY) {
+  // 省略原始动画代码
+}
+</code></pre>
+
+<p>可以将下面的 <code>ViewTreeObserver</code> 代码</p>
+
+<pre><code>ViewTreeObserver vto = mTitleView.getViewTreeObserver();
+vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+  @Override
+  public void onGlobalLayout() {
+    if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.JELLY_BEAN) {
+      view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+    } else {
+      view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+    }
+    updateFlexibleSpaceText(scrollView.getCurrentScrollY());
+  }
+});
+</code></pre>
+
+<p>改成：</p>
+
+<pre><code>ScrollUtils.addOnGlobalLayoutListener(mTitleView, new Runnable() {
+  @Override
+  public void run() {
+    updateFlexibleSpaceText(scrollView.getCurrentScrollY());
+  }
+});
+</code></pre>
+
+<p>这样就完成了整个弹性空白效果的实现。</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/header/" title="ObservableScrollView分析 —— Sticky header 顶部固定">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— Sticky header 顶部固定
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/pictureblank/" title="ObservableScrollView分析 —— 使用图像的弹性空白布局">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— 使用图像的弹性空白布局
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

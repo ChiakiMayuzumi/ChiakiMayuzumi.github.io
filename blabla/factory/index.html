@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>设计模式-工厂模式 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/blabla/factory/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/blabla/factory/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        设计模式-工厂模式
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>设计模式-工厂模式 </h1>
+
+			
+
+<p>#设计模式概要</p>
+
+<p>Apple 的 Cocoa Fundamentals Guide上有这样一句话：
+&gt; Design Pattern is a solution to a problem in a context.</p>
+
+<p>也就是说，设计模式是针对特定上下文的特定问题的解决方案，在忽略掉不重要的细节后，这种解决方案被抽象化，发现问题的一般性本质并将其模版化，找到普遍适用的解决方案从而形成了设计模式。</p>
+
+<p>设计模式的本质是面向对象方法的实际运用。具体而言，是封装、继承、多态和关联的反复使用。通过封装、继承和多态把程序的耦合度降低；用设计模式使得程序更加灵活，在支持可维护性的同时，提高系统的可复用性。</p>
+
+<p>设计模式主要有以下四个基本要素：</p>
+
+<p><strong>1. 模式名称（pattem name）</strong></p>
+
+<p>一个名称用来描述模式的问题、解决方案和效果。</p>
+
+<p><strong>2. 问题（problem）</strong></p>
+
+<p>描述了设计模式在何种情形使用。它解释了设计模式形成的前因后果，描述了特定的设计问题。问题往往就是模式必须满足的一系列先决条件。</p>
+
+<p><strong>3. 解决方案（solution）</strong></p>
+
+<p>描述模式的组成成分，成分之间的相互关系以及各自的指着和协作方式。</p>
+
+<p><strong>4. 效果（consequences）</strong></p>
+
+<p>效果用来描述设计模式的利弊，效果往往是我们权衡模式是否可用的重要因素。</p>
+
+<p>一般来说，大家还同意模式包含以下的这些要素：</p>
+
+<ul>
+<li><p>力（Force）</p></li>
+
+<li><p>举例（Example）</p></li>
+
+<li><p>末态环境（Resulting Context）</p></li>
+
+<li><p>推理（Rationale）</p></li>
+
+<li><p>其他有关模式（Related Patterns）</p></li>
+
+<li><p>已知的应用（Known Uses）</p></li>
+</ul>
+
+<p>还需要了解的是设计模式应当遵循的七大原则，包括：开-闭原则、里氏代换原则、依赖倒转原则、接口隔离原则、合成/聚合复用原则、抽象原则和迪米特法则。由于篇幅有限这里不再介绍，附上别人的博客地址：</p>
+
+<p><a href="http://blog.sina.com.cn/s/blog_4e60b09d0101d1xc.html">Java设计模式遵循的七大原则</a></p>
+
+<p>最后，我们可以把设计模式类比为各种武功招式，习武都崇尚无招胜有招，码代码亦是如此，达到最高境界后只记住一句内功心法：低耦合，高内聚。相信随着对设计模式的深入了解能够更加体会到这点的玄妙之处。</p>
+
+<h1 id="工厂模式">工厂模式</h1>
+
+<p>工厂模式专门负责将大量有共有接口的类实例化，可以动态决定将哪个类实例化，不必事先知道每次要实例化哪一个类。该模式往往是设计模式初学者入门的模式，可以称得上为典型又最具启发效果的模式。</p>
+
+<p>工厂模式有三种形态，分别是简单工厂（Simple Factory）模式，工厂方法（Factory Method）模式和抽象工厂（Abstract Factory）模式。下面就从上一节中提到的基本要素开始分析三种形态的工厂模式，通过对比来理解三种模式的作用和不同之处。</p>
+
+<h2 id="名字">名字</h2>
+
+<p><strong>简单工厂（Simple Factory）</strong>：又称静态工厂方法模式（Static Factory Method Pattern），简单工厂模式是由一个工厂对象决定创建出哪一种产品类的实例。</p>
+
+<p>简单工厂模式的工厂类一般是使用静态方法，通过接收的参数的不同来返回不同的对象实例，通常它返回的类都有一个公共的父类（或者接口对象）。</p>
+
+<p>简单结构如图：</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/简单工厂模式的简单结构图.png" alt="简单工厂模式的简单结构图" /></p>
+
+<p>在简单工厂模式中，工厂类是整个模式的关键，其包含必要的判断逻辑，能够根据外界给定的信息，决定究竟创建哪个类的实例，外界可以不用去关注对象的创建，仅需要负责“消费”对象就可以了，明确区分了责任，有利于结构的优化。</p>
+
+<p><strong>工厂方法（Factory Method）</strong>：又称多态性工厂（Polymorphic Factory）模式或虚拟构造子（Virtual Constructor）模式。</p>
+
+<p>它定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。</p>
+
+<p>简单结构如图：</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/工厂方法模式的简单结构图.png" alt="工厂方法模式的简单结构图" /></p>
+
+<p>工厂方法模式是我们在简单工厂模式的基础上再次进行抽象，为了扩展的方便和修改封闭，把一些对功能的判断不在放到一个类中，而是抽象出操作的工厂接口，各个工厂再去实现这个接口，变得更为固定，就像是机械般的。逻辑判断是在客户端通过实例化哪个具体的工厂来代替了简单工厂中工厂类中的逻辑判断。</p>
+
+<p><strong>抽象工厂（Abstract Factory）</strong>：又称工具箱（Kit 或Toolkit）模式，提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。抽象工厂和工厂方法大致相同，不同就是一簇，是一系列的产品操作。</p>
+
+<p>简单的结构图：</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/抽象工厂模式的简单结构图.png" alt="抽象工厂模式的简单结构图" /></p>
+
+<p>左边的等级结构代表工厂等级结构，右边的两个等级结构分别代表两个不同产品的等级结构。抽象工厂模式可以向客户端提供一个接口，使得客户端在不必指定产品的具体类型的情况下创建多个产品族中的对象，这就是抽象工厂模式的用意。</p>
+
+<h2 id="问题">问题</h2>
+
+<p><strong>什么时候应该使用简单工厂模式：</strong></p>
+
+<p>如果你能预测到所有产品类的情况，建议就用简单工厂。</p>
+
+<p><strong>什么时候应该使用工厂方法模式：</strong></p>
+
+<ul>
+<li>客户端不知道它要创建的具体是哪一个子类。</li>
+<li>一个类想要由自己的子类来定义某对象的创建过程。</li>
+<li>类将创建某对象的职责代理给一些帮助子类中的一个，并且你想要将哪一个子类作为代理的信息进行局部化。</li>
+</ul>
+
+<p><strong>什么时候应该使用工厂方法模式：</strong></p>
+
+<ul>
+<li>多个抽象产品类，每个抽象产品类可以派生出多个具体产品类。<br /></li>
+<li>一个抽象工厂类，可以派生出多个具体工厂类。<br /></li>
+<li>每个具体工厂类可以创建多个具体产品类的实例。<br /></li>
+</ul>
+
+<p><strong>区别：</strong></p>
+
+<ul>
+<li>简单工厂的工厂类方法都是静态的。</li>
+<li>简单工厂侧重于创建对象的代码复用，或者已创建实例的复用，或者创建实例的统一性；而工厂方法侧重于子类自己特定创建逻辑的实现</li>
+<li>简单工厂模式中的工厂类是为产品类实例化的核心，而工厂方法模式把初始化工作交给子类实现。</li>
+<li>工厂方法模式只有一个抽象产品类，而抽象工厂模式有多个。<br /></li>
+<li>工厂方法模式的具体工厂类只能创建一个具体产品类的实例，而抽象工厂模式可以创建多个。</li>
+</ul>
+
+<h2 id="解决方案">解决方案</h2>
+
+<p><strong>简单工厂模式的结构：</strong></p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/简单工厂模式结构图.png" alt="简单工厂模式结构图" /></p>
+
+<ul>
+<li><strong>工厂类（Creator）角色：</strong>工厂方法的核心，在客户端的直接调用下创建产品对象。（具体java类）</li>
+<li><strong>抽象产品（Product）角色：</strong>工厂方法模式创建的对象的父类或者它们拥有共同的接口。（Java接口或Java抽象类）</li>
+<li><strong>具体产品（Concrete Product）角色：</strong>工厂方法模式创建的任何对象都是这个角色的实例。（具体Java类）</li>
+</ul>
+
+<p><strong>工厂方法模式的结构：</strong></p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/工厂方法模式结构图.png" alt="工厂方法模式结构图" /></p>
+
+<ul>
+<li><strong>抽象工厂（Creator）角色：</strong>工厂方法的核心，与应用程序无关。任何在模式中创对象的工厂类必须实现这个接口。（Java接口或抽象Java类）
+-** 具体工厂（Concrete Creator）角色：**实现了抽象工厂接口的具体java类，与应用有密切关联，并受到应用程序的调用来创建产品对象。</li>
+<li><strong>抽象产品（Product）角色：</strong>同简单工厂。（Java接口或抽象Java类）</li>
+<li><strong>具体产品（Concrete Product）角色：</strong>同简单工厂。（具体Java类）</li>
+</ul>
+
+<p><strong>抽象工厂模式的结构：</strong></p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/抽象工厂模式结构图.png" alt="抽象工厂模式结构图" /></p>
+
+<ul>
+<li><strong>抽象工厂（Abstract Factory）角色：</strong>同工厂方法。（java接口抽象java）</li>
+<li><strong>具体工厂（Concrete Factory）角色：</strong>同工厂方法。（具体java类）</li>
+<li><strong>抽象产品（Abstract Product）角色：</strong>同工厂方法。（java接口抽象java）</li>
+<li><strong>具体产品类（Concrete Product）角色：</strong>同工厂方法。（具体java类）</li>
+</ul>
+
+<h2 id="效果">效果</h2>
+
+<p><strong>简单工厂优点：</strong></p>
+
+<p>让对象的调用者和对象创建过程分离，当对象调用者需要对象时，直接向工厂请求，从而避免了对象的调用者与对象的实现类以硬编码方式耦合，以提高系统的可维护性、可扩展性；设计简单，产品类的等级结构不会反映到工厂类中来，产品类的等级结构变化不会影响工厂类。</p>
+
+<p><strong>简单工厂缺点：</strong></p>
+
+<p>体现在其工厂类上，该类集中了所有实例的创建逻辑，违反了高内聚的责任分配原则，当系统的具体产品类不断增多时，工厂类中条件判断过多，不利于扩展及维护，没有遵守开放—封闭原则。如果将来需要产品类，那么，在简单工厂模式中，就必须在简单工厂类中添加相应的判断语句，必然导致工厂类的修改。不修改代码的话，是无法扩展的。</p>
+
+<p><strong>工厂方法的优点：</strong></p>
+
+<p>简单工厂模式的缺点，利用工厂方法模式可以得到一定的克服。在简单工厂模式的基础上再次进行抽象，为了扩展的方便和修改封闭，把一些对功能的判断不在放到一个类中，而是抽象出操作的工厂接口，各个工厂再去实现这个接口。它遵循了“开放—封闭”原则。在同一等级结构中，支持增加任意产品。</p>
+
+<p><strong>工厂方法的缺点：</strong></p>
+
+<p>把简单工厂的内部逻辑判断转移到了客户端代码来执行；每增加一产品就要增加一个产品工厂的类，增加了额外的开发量。</p>
+
+<p><strong>抽象工厂的优点：</strong></p>
+
+<p>抽象工厂是应对产品族概念的。应对产品族概念而生，增加新的产品线很容易，抽象工厂模式隔离了具体类的生产，使得客户并不需要知道什么被创建，当一个产品族中的多个对象被设计成一起工作时，它能保证客户端始终只使用同一个产品族中的对象。</p>
+
+<p><strong>抽象工厂的缺点：</strong></p>
+
+<p>增加新的产品等级结构很复杂，需要修改抽象工厂和所有的具体工厂类，对“开闭原则”的支持呈现倾斜性。</p>
+
+<p>以上三种工厂方法在等级结构和产品族这两个方向上的支持程度不同，所以要根据情况考虑应该使用哪种方法。</p>
+
+<h2 id="示例">示例</h2>
+
+<p>例子是我自己写的一个自动贩售饮料机的简单实现。</p>
+
+<p>在简单工厂模式下，创建一个DrinkFactory，通过它来产生我所需要的饮料：可乐，雪碧和芬达。</p>
+
+<p>饮料接口Drink：</p>
+
+<p>/**
+   * 饮品接口
+   * @author chiakimayuzumi
+   *
+   */
+  public interface Drink {</p>
+
+<pre><code>/**
+ * kind 方法 表明口味
+ */
+ public void kind();
+</code></pre>
+
+<p>}</p>
+
+<p>具体可乐类：</p>
+
+<p>/**
+   * 可乐
+   * @author chiakimayuzumi
+   *
+   */
+   public class Cola implements Drink {</p>
+
+<pre><code>@Override
+public void kind() {
+  System.out.println(&quot;I Love Cola&quot;);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>具体雪碧类：</p>
+
+<p>/**
+   * 雪碧
+   * @author chiakimayuzumi
+   *
+   */
+  public class Sprite implements Drink {</p>
+
+<pre><code>@Override
+public void kind() {
+  System.out.println(&quot;I Love Sprite&quot;);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>具体芬达类：</p>
+
+<p>/**
+   * 芬达
+   * @author chiakimayuzumi
+   *
+   */
+   public class Fanta implements Drink {</p>
+
+<pre><code>@Override
+public void kind() {
+  System.out.println(&quot;I Love Fanta&quot;);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>工厂类：</p>
+
+<p>/**
+   * 工厂类
+   * @author chiakimayuzumi
+   *
+   */
+  public class DrinkFactory {</p>
+
+<pre><code>public static Drink produceDrink(String kind){
+
+    Drink drink = null;
+    if(kind.equals(&quot;Cola&quot;)){
+      drink = new Cola();           
+    }else if(kind.equals(&quot;Sprite&quot;)){
+      drink = new Sprite();
+    }else if(kind.equals(&quot;Fanta&quot;)){
+      drink = new Fanta();
+    }else {
+      throw new IllegalArgumentException(&quot;No such kind&quot;);
+    }
+    return drink;
+
+
+}
+</code></pre>
+
+<p>}</p>
+
+<p>客户端调用：</p>
+
+<p>/**
+   * 客户端调用
+   * @author chiakimayuzumi
+   *
+   */
+  public class Console {</p>
+
+<pre><code>  public static void main(String[] args) {  
+
+      Drink  drink1 = DrinkFactory.produceDrink(&quot;Cola&quot;);  
+      drink1.kind();  
+
+      Drink  drink2 = DrinkFactory.produceDrink(&quot;Sprite&quot;);  
+      drink2.kind();  
+
+      Drink  drink3 = DrinkFactory.produceDrink(&quot;Fanta&quot;);  
+      drink3.kind();  
+
+      Drink  drink4 = DrinkFactory.produceDrink(&quot;Coffee&quot;);  
+      drink4.kind();  
+
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>最终结果：</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/简单工厂示例结果.png" alt="简单工厂示例结果" /></p>
+
+<p>最后抛出错误是因为客户端调用了没有的饮品类型咖啡。</p>
+
+<p>随后，有消费者反映，希望能够买到咖啡。通过观察上述代码我们可以发现，如果需要实现这个功能，必须修改DrinkFactory中的代码。这样就违背了开闭原则。如果我们用工厂方法模式实现这个自动贩售饮料机呢？</p>
+
+<p>一个抽象的工厂类：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public abstract class DrinkFactory {</p>
+
+<pre><code>  protected abstract Drink produceDrink();  
+</code></pre>
+
+<p>}</p>
+
+<p>可乐工厂类：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class ColaFactory extends DrinkFactory {</p>
+
+<pre><code>  @Override  
+  protected Drink produceDrink() {  
+
+      return new Cola();  
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>雪碧工厂类：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class SpriteFactory extends DrinkFactory {</p>
+
+<pre><code>  @Override  
+  protected Drink produceDrink() {  
+
+      return new Sprite();  
+  }  
+</code></pre>
+
+<p>}<br />
+芬达工厂类：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class FantaFactory extends DrinkFactory {</p>
+
+<pre><code>  @Override  
+  protected Drink produceDrink() {  
+
+      return new Fanta();  
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>最后在客户端调用即可，如果需要增加咖啡，只需要增加具体的咖啡类和咖啡工厂类即可。</p>
+
+<p>咖啡类：</p>
+
+<p>/**
+   * Coffee
+   * @author chiakimayuzumi
+   *
+   */
+   public class Coffee implements Drink {</p>
+
+<pre><code>@Override
+public void kind() {
+  System.out.println(&quot;I Love Coffee&quot;);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>咖啡工厂类：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class CoffeeFactory extends DrinkFactory {</p>
+
+<pre><code>  @Override  
+  protected Drink produceDrink() {  
+
+      return new Coffee();  
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>然后调用：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class Console {</p>
+
+<pre><code>  public static void main(String[] args) {  
+
+  Drink d1 = new ColaFactory().produceDrink();
+  d1.kind();
+
+  Drink d2 = new SpriteFactory().produceDrink();
+  d2.kind();
+
+  Drink d3 = new FantaFactory().produceDrink();
+  d3.kind();
+
+  Drink d4 = new CoffeeFactory().produceDrink();
+  d4.kind();
+
+
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/工厂方法示例结果.png" alt="工厂方法示例结果" /></p>
+
+<p>完成这一步后，又有消费者反应，冬天的时候，最好能喝到热的饮料。如果要满足这样的需求，我们需要再增加的是热可乐的具体类，热雪碧的具体类，热芬达的具体类，热咖啡的具体类，热可乐工厂，热雪碧工厂，热芬达工厂，热咖啡工厂。如此繁多的类看起来是不是非常的麻烦呢。如果我们一开始就知道我们的贩售机需要提供两种类型的饮品，也就是不同的产品族，就应该用抽象工厂的模式来写代码。</p>
+
+<p>首先实现两个接口，一个HotDrink：</p>
+
+<p>/**</p>
+
+<ul>
+<li>@author chiakimayuzumi</li>
+
+<li><p>*/<br />
+public interface HotDrink {</p>
+
+<p>public void kind();<br />
+}</p></li>
+</ul>
+
+<p>一个ColdDrink：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public interface ColdDrink {</p>
+
+<pre><code>  public void kind();  
+</code></pre>
+
+<p>}</p>
+
+<p>然后分别让四种具体产品继承并实现，这里只贴上可乐类的代码：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */
+   public class ColdCola implements ColdDrink {</p>
+
+<pre><code>@Override
+public void kind() {
+  System.out.println(&quot;I Love ColdCola&quot;);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */
+   public class HotCola implements HotDrink {</p>
+
+<pre><code>@Override
+public void kind() {
+  System.out.println(&quot;I Love HotCola&quot;);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>然后实现所有饮品的工厂类，这里只贴可乐工厂的代码：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class ColaFactory extends DrinkFactory {</p>
+
+<pre><code>  @Override  
+  public HotDrink produceHotDrink() {  
+
+      return new HotCola();  
+  }  
+
+  @Override  
+  public ColdDrink produceColdDrink() {  
+
+      return new ColdCola();  
+  }  
+</code></pre>
+
+<p>}</p>
+
+<p>最后客户端调用：</p>
+
+<p>/**
+   *
+   * @author chiakimayuzumi
+   *
+   */<br />
+  public class Console {</p>
+
+<pre><code>  public static void main(String[] args) {  
+
+  DrinkFactory colaFactory = new ColaFactory();
+  HotDrink hotCola = colaFactory.produceHotDrink();
+  ColdDrink coldCola = colaFactory.produceColdDrink();
+
+  hotCola.kind();
+  coldCola.kind();
+
+  DrinkFactory spriteFactory = new SpriteFactory();
+  HotDrink hotSprite = spriteFactory.produceHotDrink();
+  ColdDrink coldSprite = spriteFactory.produceColdDrink();
+
+  hotSprite.kind();
+  coldSprite.kind();
+
+  DrinkFactory fantaFactory = new FantaFactory();
+  HotDrink hotFanta = fantaFactory.produceHotDrink();
+  ColdDrink coldFanta = fantaFactory.produceColdDrink();
+
+  hotFanta.kind();
+  coldFanta.kind();
+
+  DrinkFactory coffeeFactory = new CoffeeFactory();
+  HotDrink hotCoffee = coffeeFactory.produceHotDrink();
+  ColdDrink coldCoffee = coffeeFactory.produceColdDrink();
+
+  hotCoffee.kind();
+  coldCoffee.kind();
+
+
+
+}  
+</code></pre>
+
+<p>}</p>
+
+<p>输出结果：</p>
+
+<p><img src="http://blog.qiji.tech/wp-content/uploads/2016/02/抽象工厂示例结果.png" alt="抽象工厂示例结果" /></p>
+
+<h2 id="已知的应用">已知的应用</h2>
+
+<p>在ApiDemos中，我找到了一个有关简单工厂的简单应用，该应用主要位于graphics文件夹下，在一些处理图像的有关类中可以看到简单工厂的影子。主要是应用BitmapFactory类中的不同的静态方法多次生成满足需要的Bitmap类。</p>
+
+<p>例如：
+AlphaBitmap类中：</p>
+
+<pre><code>InputStream is = context.getResources().openRawResource(R.drawable.app_sample_code);
+mBitmap = BitmapFactory.decodeStream(is);
+mBitmap2 = mBitmap.extractAlpha();
+mBitmap3 = Bitmap.createBitmap(200, 200, Bitmap.Config.ALPHA_8);
+drawIntoBitmap(mBitmap3);
+</code></pre>
+
+<p>BitmapDecode类中：</p>
+
+<pre><code>BitmapFactory.Options opts = new  BitmapFactory.Options();
+Bitmap bm;
+
+opts.inJustDecodeBounds = true;
+bm = BitmapFactory.decodeStream(is, null, opts);
+</code></pre>
+
+<p>DensityActivity类中：</p>
+
+<p>private Bitmap loadAndPrintDpi(int id, boolean scale) {
+          Bitmap bitmap;
+          if (scale) {
+              bitmap = BitmapFactory.decodeResource(getResources(), id);
+          } else {
+              BitmapFactory.Options opts = new BitmapFactory.Options();
+              opts.inScaled = false;
+              bitmap = BitmapFactory.decodeResource(getResources(), id, opts);
+          }
+          return bitmap;
+      }</p>
+
+<p>很遗憾在ApiDemos中我暂时没有找到工厂方法和抽象工厂的应用，如果以后找到了其他的示例我会补充在这里。</p>
+
+<h1 id="最后">最后</h1>
+
+<p>这里用来记录每一次文章修改之处和补充之处。</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/others/setupwithviewpager/" title="setupWithViewPager()后到底发生了什么？">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              setupWithViewPager()后到底发生了什么？
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/blabla/composite/" title="设计模式-组合模式">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              设计模式-组合模式
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

@@ -8,18 +8,18 @@
   <head lang="en-us">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
-    <title>Using StarterNetworkActivity to make easier HTTP request - ChiakiMayuzumi</title>
+    <title>ObservableScrollView分析 —— 显示/隐藏 Toolbar - ChiakiMayuzumi</title>
     <meta name="generator" content="Hugo 0.15" />
 
     
     <meta name="description" content="A material design theme for documentations.">
     
-    <link rel="canonical" href="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/thirdlib/toolbar/">
     
     <meta name="author" content="ChiakiMayuzumi">
     
 
-    <meta property="og:url" content="http://chiakimayuzumi.github.io/androidstartkit/starternetworkactivity/">
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/thirdlib/toolbar/">
     <meta property="og:title" content="ChiakiMayuzumi">
     <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
     <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
@@ -93,7 +93,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Using StarterNetworkActivity to make easier HTTP request
+        ObservableScrollView分析 —— 显示/隐藏 Toolbar
       </div>
     </div>
 
@@ -213,177 +213,162 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Using StarterNetworkActivity to make easier HTTP request </h1>
+			<h1>ObservableScrollView分析 —— 显示/隐藏 Toolbar </h1>
 
-			
+			<p>#Toolbar的显示/隐藏</p>
 
-<p><a href="https://github.com/qijitech/android-starter-kit">android-starter-kit</a></p>
-
-<p><code>android-starter-kit</code> is a fast development kit for Android developer,and this topic describes how to use <code>StarterNetworkActivity</code> to make your new activity’s HTTP requests easier.</p>
-
-<h2 id="overview">Overview</h2>
-
-<p>To make the HTTP requests, we could use some third-party libraries such as <code>retrofit 2.0</code>,which is known as a type-safe HTTP client for Android and Java.</p>
-
-<p><code>android-starter-kit</code> simply encapsulates <code>retrofit 2.0</code> in it so if you are familiar with <code>retrofit 2.0</code>,it won’t be difficult for you to use <code>StarterNetworkActivity</code>.</p>
-
-<h2 id="how-to-use">How to use</h2>
-
-<p>In <code>android-starter-kit</code> demo App ,<code>LoginActivity</code> shows how to use <code>StarterNetworkActivity</code>,so let’s see the source code in :</p>
-
-<pre><code>  com.smartydroid.android.kit.demo.ui.activity.LoginActivity
-</code></pre>
-
-<h2 id="preparations">Preparations</h2>
-
-<p>Preparations must be done before using <code>StarterNetworkActivity</code>,which contains:</p>
+<p>这一节描述了如何处理 ObservableScrollView 关于Toolbar 的显示/隐藏，并给出在各个 View 上是如何应用的实例，主要实例有：</p>
 
 <ul>
-<li>a proper entity class</li>
-<li>get RetrofitBuilder with baseUrl</li>
-<li>get apiService and your own HTTP service interface</li>
+<li>ToolbarControlBaseActivity</li>
+<li>ToolbarControlGridViewActivity</li>
+<li>ToolbarControlListViewActivity</li>
+<li>ToolbarControlRecyclerViewActivity</li>
+<li>ToolbarControlScrollViewActivity</li>
+<li>ToolbarControlWebViewActivity</li>
 </ul>
 
-<h3 id="a-proper-entity-class">a proper entity class</h3>
+<p>Toolbar 有关的文章如下：</p>
 
-<p>Define your own entity class which extends <code>Entity</code> class.</p>
+<p><a href="http://blog.qiji.tech/archives/6058">Android:Toolbar使用心得</a></p>
 
-<p>Demo App provides an entity class named <code>User</code>:</p>
+<p><a href="http://www.tuicool.com/articles/7BJBZb">android：Toolbar详解</a></p>
 
-<pre><code>@JsonIgnoreProperties(ignoreUnknown = true) public class User extends Entity implements Account {
+<p>Toolbar 在 Android 5.0 中被引进，如果你需要在更低版本中使用这个控件的话，需要使用 v7 appcompat library 兼容包。</p>
 
-  public Integer id;
-  public String phone;
-  public String nickname;
-  public String avatar;
-  public String token;
+<p>#创建布局文件</p>
 
-  public User() {
+<p>我们在布局中使用 ObservableListView 和 Toolbar，并将布局放入 FrameLayout 中，FrameLayout 和 RelativeLayout 这两个布局比较擅长用来转换它们内部的单独布局。</p>
 
-  }
-……
+<pre><code>&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+android:layout_width=&quot;match_parent&quot;
+android:layout_height=&quot;match_parent&quot;&gt;
+
+&lt;android.support.v7.widget.Toolbar
+android:id=&quot;@+id/toolbar&quot;
+android:layout_width=&quot;match_parent&quot;
+android:layout_height=&quot;wrap_content&quot;
+android:background=&quot;?attr/colorPrimary&quot;
+android:minHeight=&quot;?attr/actionBarSize&quot;
+app:popupTheme=&quot;@style/Theme.AppCompat.Light.DarkActionBar&quot;
+app:theme=&quot;@style/Toolbar&quot; /&gt;
+
+&lt;com.github.ksoichiro.android.observablescrollview.ObservableListView
+android:id=&quot;@+id/scrollable&quot;
+android:layout_width=&quot;match_parent&quot;
+android:layout_height=&quot;match_parent&quot;
+android:layout_marginTop=&quot;?attr/actionBarSize&quot; /&gt;
+&lt;/FrameLayout&gt;
 </code></pre>
 
-<h3 id="get-retrofitbuilder-with-baseurl">get RetrofitBuilder with baseUrl</h3>
+<p>#如何显示/隐藏Toolbar</p>
 
-<p>You should get the <code>RetrofitBuilder</code> in your Application class which extends <code>StarterKitApp</code>.</p>
+<p>参考上一节内容，我们可以考虑像显示/隐藏 ActionBar 那样来处理对 Toolbar 的显示/隐藏转换，然而，Toolbar 类却并没有 ActionBar 中的 show 方法和 hide 方法。因此，我们应该自己去完成类似的方法，从而做到 Toolbar 的显示/隐藏，初步设想如下：</p>
 
-<p>In demo App the Application Class is <code>DemoApp</code>:</p>
-
-<pre><code>public class DemoApp extends StarterKitApp {
-……
-</code></pre>
-
-<p><code>DemoApp</code> is a base class for those who need to maintain global application state,in which we get <code>RetrofitBuilder</code>:</p>
-
-<pre><code> @Override public void onCreate() {
-
-    // common config
-    ……
-    super.onCreate();
-  ……
-    // init api service
-    new RetrofitBuilder.Builder()
-        .accept(Profile.API_ACCEPT)
-        .baseUrl(Profile.API_ENDPOINT)
-        .build();
-  ……
-  }
-</code></pre>
-
-<p>baseUrl <code>API_ENDPOINT</code> is in <code>Profile</code> interface:</p>
-
-<pre><code>public interface Profile {
-
-  String API_ENDPOINT = &quot;http://fakerapi.qiji.tech&quot;;
-  ……
-</code></pre>
-
-<h3 id="get-apiservice-and-your-own-http-service-interface">get ApiService and your own HTTP service interface</h3>
-
-<p>Retrofit turns your HTTP API into a Java interface,so write your own HTTP service interface using the defined entity:</p>
-
-<pre><code>public interface AuthService {
-
-  /**
-   * Login Interface
-   *
-   * @param phone 
-   * @param password 
-   * @return Call
-   */
-  @FormUrlEncoded @POST(&quot;/auth/login&quot;) Call&lt;User&gt; login(
-      @Field(&quot;phone&quot;) String phone,
-      @Field(&quot;password&quot;) String password);
-
-  @GET(&quot;/user/profile&quot;) Call&lt;User&gt; profile();
+<pre><code>@Override
+public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+if (scrollState == ScrollState.UP) {
+if (toolbarIsShown()) {   // 需要完成方法
+hideToolbar(); // 需要完成方法
+}
+} else if (scrollState == ScrollState.DOWN) {
+if (toolbarIsHidden()) { // 需要完成方法
+showToolbar(); // 需要完成方法
+}
+}
 }
 </code></pre>
 
-<p>ApiService is defined to get your own HTTP service or other HTTP service with <code>retrofit</code>:</p>
+<p>在我们开始完成方法前，应该确认一下，是否还要支持Honeycomb（API Level 11）之前的设备，因为我们可能需要使用一些合适的动画接口，这些接口可能不再支持上述设备。</p>
 
-<pre><code>public class ApiService {
+<p>如果你需要兼容，可以用 NineOldAndroids 这个动画开源库，由于 View 的属性动画在 Android API 11 及其以后才支持，该库的作用就是让 API 11 以下的系统也能够正常的使用属性动画。</p>
 
-  // create your HTTP interface with retrofit
-  public static AuthService createAuthService() {
-    return retrofit().create(AuthService.class);
-  }
-  
-  // create other HTTP interface with retrofit
-  public static FeedService createFeedService() {
-    return retrofit().create(FeedService.class);
-  }
+<p>在这个项目里面，我们使用的就是这个动画库，如果你不打算兼容 API 11 以下的设备，请将 ViewHelper.methodName(viewObject) 换成  viewObject.methodName()，否则可能无法正常运行。</p>
 
-  // get retrofit
-  private static Retrofit retrofit() {
-    return RetrofitBuilder.get().retrofit();
-  }
+<pre><code>NineOldAndroids: ViewHelper.getTranslationY(mToolbar)
+Platform API:    mToolbar.getTranslationY()
+</code></pre>
+
+<p>当你使用 NineOldAndroids 开源库，需要在 build.grade 中加入依赖：</p>
+
+<pre><code>dependencies {
+compile 'com.nineoldandroids:library:2.4.0'
 }
 </code></pre>
 
-<h2 id="using-starternetworkactivity">Using StarterNetworkActivity</h2>
+<p>现在让我们来写我们需要实现的方法。为了避免冗余的显示隐藏转换，我们需要判断一下 Toolbar 现在的状态，是否出现或者隐藏。使用合适的动画接口（或者NineOldAndroids）我们只需要判断 translationY 的值就可以知道 Toolbar 此时的状态了。</p>
 
-<p>Define your own activity extends <code>StarterNetworkActivity</code>：</p>
+<pre><code>private boolean toolbarIsShown() {
+// Toolbar 在Y轴坐标为0，也就是正在显示
+return ViewHelper.getTranslationY(mToolbar) == 0;
+}
 
-<pre><code>public class LoginActivity extends StarterNetworkActivity&lt;User&gt; {
-……
+private boolean toolbarIsHidden() {
+// Toolbar 在屏幕外，并且Y坐标的绝对值等于它的高度，也就是正在隐藏
+return ViewHelper.getTranslationY(mToolbar) == -mToolbar.getHeight();
+}
 </code></pre>
 
-<p>Next, get defined HTTP service interface in method <code>onCreate</code>:</p>
+<p>判断完状态后，接下来就可以完善我们自己定义的 show 和 hide 方法代码了，先写好伪代码来简化问题：</p>
 
-<pre><code>……
- private AuthService mAuthService;
+<pre><code>private void showToolbar() {
+moveToolbar(0);
+}
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_login);
-
-    mAuthService = ApiService.createAuthService();
-……
+private void hideToolbar() {
+moveToolbar(-mToolbar.getHeight());
+}
 </code></pre>
 
-<p>The following override callbacks should be paid attention to:</p>
+<p>如果我们完成了 moveToolbar 方法，那么应该就可以就可以实现 Toolbar 的显示转换了。</p>
 
-<pre><code>  // call before request
-  @Override public void startRequest() {
-    showHud(“Logining...&quot;);
-  }
+<p>大部分的动画代码都跟属性值的计算相结合，如何正确的计算是一个非常关键的问题，虽然我们将方法命名为 moveToolbar，还需要注意一点，那就是在上一节中，不仅 ActionBar 移动了，view（Observable*View）的高度也改变了，我们需要把这一个功能也实现出来。</p>
 
-  // call after request success with your defined entity class
-  @Override public void respondSuccess(User data) {
-    AccountManager.store(data);
-    Snackbar.make(getWindow().getDecorView(), “Login Success”, Snackbar.LENGTH_SHORT).show();
-    Intent upIntent = NavUtils.getParentActivityIntent(this);
-    NavUtils.navigateUpTo(this, upIntent);
-  }
-  
-  // call when request end
-  @Override public void endRequest() {
-    dismissHud();
-  }
+<p>为了使用改变的属性值，我们可以使用  ValueAnimator，它有一个回调方法叫  onAnimationUpdate，我们可以在这个方法里面得到动画的进度。ValueAnimator 自身不会有动画发生，我们需要使用一个变量来让动画实现。</p>
+
+<pre><code>ValueAnimator animator = ValueAnimator.ofFloat(0, 100).setDuration(200);
+animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+@Override
+public void onAnimationUpdate(ValueAnimator animation) {
+float value = (float) animation.getAnimatedValue();
+// 这里可以对 value 值做任何事情
+}
+});
 </code></pre>
 
-<p>That&rsquo;s all.</p>
+<p>在上面的代码中，本地变量 value 在 200ms 内从 0f 变到 100f，在这种情况下，我们应该将 Toolbar 的 translationY 属性改变，并且将Observable*View高度也改变一下：</p>
+
+<pre><code>private void moveToolbar(float toTranslationY) {
+ValueAnimator animator = ValueAnimator.ofFloat(ViewHelper.getTranslationY(mToolbar), toTranslationY).setDuration(200);
+animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+@Override
+public void onAnimationUpdate(ValueAnimator animation) {
+float translationY = (float) animation.getAnimatedValue();
+ViewHelper.setTranslationY(mToolbar, translationY);
+ViewHelper.setTranslationY((View) mScrollable, translationY);
+FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) ((View) mScrollable).getLayoutParams();
+lp.height = (int) -translationY + getScreenHeight() - lp.topMargin;
+((View) mScrollable).requestLayout();
+}
+});
+animator.start();
+}
+</code></pre>
+
+<p>translationY从 ViewHelper.getTranslationY(mToolbar)( 等于current translationY) 变到了 toTranslationY，
+为了显示隐藏 Toolbar 的，我们只需要调用ViewHelper.setTranslationY()。要改变最外层布局（FrameLayout）的高度，设置  FrameLayout.LayoutParams 参数，并通过调用requestLayout() 方法来更新。</p>
+
+<p>最好检查一下目前的 translationY 值，看是否已经等于 toTranslationY，如果是，就停止动画更新。</p>
+
+<pre><code>private void moveToolbar(float toTranslationY) {
+// 检查当前Y坐标
+if (ViewHelper.getTranslationY(mToolbar) == toTranslationY) {
+return;
+}
+// 省略……
+}
+</code></pre>
 
 
 			<aside class="copyright" role="note">
@@ -402,7 +387,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="http://chiakimayuzumi.github.io/apidemos/textswitcher/" title="TextSwitcher 使用和源码分析">
+      <a href="http://chiakimayuzumi.github.io/thirdlib/pictureblank/" title="ObservableScrollView分析 —— 使用图像的弹性空白布局">
         <span class="direction">
           Previous
         </span>
@@ -412,7 +397,7 @@
           </div>
           <div class="stretch">
             <div class="title">
-              TextSwitcher 使用和源码分析
+              ObservableScrollView分析 —— 使用图像的弹性空白布局
             </div>
           </div>
         </div>
@@ -422,14 +407,14 @@
 
   <div class="next">
   
-      <a href="http://chiakimayuzumi.github.io/others/setupwithviewpager/" title="setupWithViewPager()后到底发生了什么？">
+      <a href="http://chiakimayuzumi.github.io/thirdlib/parallax/" title="ObservableScrollView分析 —— 视差图像 Parallax image 实现">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              setupWithViewPager()后到底发生了什么？
+              ObservableScrollView分析 —— 视差图像 Parallax image 实现
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

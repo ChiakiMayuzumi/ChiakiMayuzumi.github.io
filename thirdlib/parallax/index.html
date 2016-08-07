@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <title>ObservableScrollView分析 —— 视差图像 Parallax image 实现 - ChiakiMayuzumi</title>
+    <meta name="generator" content="Hugo 0.15" />
+
+    
+    <meta name="description" content="A material design theme for documentations.">
+    
+    <link rel="canonical" href="http://chiakimayuzumi.github.io/thirdlib/parallax/">
+    
+    <meta name="author" content="ChiakiMayuzumi">
+    
+
+    <meta property="og:url" content="http://chiakimayuzumi.github.io/thirdlib/parallax/">
+    <meta property="og:title" content="ChiakiMayuzumi">
+    <meta property="og:image" content="http://chiakimayuzumi.github.io/images/cm.png">
+    <meta name="apple-mobile-web-app-title" content="ChiakiMayuzumi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://chiakimayuzumi.github.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?52m981');
+        src: url('http://chiakimayuzumi.github.io/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.woff?52m981')
+               format('woff'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.ttf?52m981')
+               format('truetype'),
+             url('http://chiakimayuzumi.github.io/fonts/icon.svg?52m981#icon')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://chiakimayuzumi.github.io/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu%2bMono">
+    <style>
+      body, input {
+        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="http://chiakimayuzumi.github.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-light red palette-accent-light green">
+
+
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        ObservableScrollView分析 —— 视差图像 Parallax image 实现
+      </div>
+    </div>
+
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/ChiakiMayuzumi" title="@ChiakiMayuzumi on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="http://chiakimayuzumi.github.io/" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://chiakimayuzumi.github.io/images/cm.png">
+        </div>
+      
+      <div class="name">
+        <strong>ChiakiMayuzumi </strong>
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="博客目录" href="http://chiakimayuzumi.github.io/">
+	
+	博客目录
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="联系方式" href="http://chiakimayuzumi.github.io/sketch/">
+	
+	联系方式
+</a>
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+          <li>
+            <a href="https://github.com/ChiakiMayuzumi" target="_blank" title="@ChiakiMayuzumi on GitHub">
+              @ChiakiMayuzumi on GitHub
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>ObservableScrollView分析 —— 视差图像 Parallax image 实现 </h1>
+
+			
+
+<p>这一节主要说明了如何在滚动视图中产生图像的视差效果，并给出在各个 View 上是如何应用的实例，主要实例有：</p>
+
+<ul>
+<li>ParallaxToolbarScrollViewActivity</li>
+<li>ParallaxToolbarListViewActivity</li>
+</ul>
+
+<h1 id="概述">概述</h1>
+
+<h2 id="什么是视差滚动">什么是视差滚动</h2>
+
+<p>视差效果，原本是一个天文学术语，当我们观察星空时，离我们远的星星移动速度较慢，离我们近的星星移动速度则较快。当我们坐在车上向车窗外看时，也会有这样的感觉，远处的群山似乎没有在动，而近处的稻田却在飞速掠过。</p>
+
+<p>说的简单点就是界面元素在滚动屏幕时发生的位置的变化，然而各个不同的元素位置变化的速度不同，导致界面内的元素有层次错落的错觉，这和我们人体的眼球效果很像。</p>
+
+<p>视差滚动效果已经广泛运用到许多 app 中，起到了非常不错的效果。</p>
+
+<h2 id="视差效果">视差效果</h2>
+
+<p>本节中讨论的视差效果，指的是具有如下行为的布局：</p>
+
+<ul>
+<li>布局上有一张图像</li>
+<li>图像会随着 ScrollView 的滚动而滚动，然而速度减半</li>
+<li>ScrollView 自带<code>padding</code>，形成观看图片的一个窗口。</li>
+</ul>
+
+<p>为了让图像产生视差效果，我们需要在布局上使用一点技巧。</p>
+
+<p>ObservableScrollView 和 ObservableListView 在处理填充的地方有一些区别，因此我们需要分开来看。</p>
+
+<h1 id="scrollview">ScrollView</h1>
+
+<h2 id="布局">布局</h2>
+
+<h3 id="基本结构">基本结构</h3>
+
+<p>首先，如下是布局的基本结构：</p>
+
+<pre><code>&lt;FrameLayout&gt;
+  &lt;ObservableScrollView&gt;
+    &lt;RelativeLayout&gt;
+      &lt;ImageView/&gt;
+      &lt;View/&gt;
+      &lt;TextView/&gt;
+    &lt;/RelativeLayout&gt;
+  &lt;/ObservableScrollView&gt;
+  &lt;Toolbar/&gt;
+&lt;/FrameLayout&gt;
+</code></pre>
+
+<p>为了阅读方便，这里有意地省略了属性（<code>android:XXX</code>）和包名（<code>com.github.XXX</code>）</p>
+
+<h3 id="为什么要使用-framelayout">为什么要使用 FrameLayout？</h3>
+
+<p>我们可以在示例 app 上看到，Toolbar 是覆盖在 ObservableScrollView 之上的，为了得到这样的效果，我们需要使用 FrameLayout 或者 RelativeLayout。</p>
+
+<h3 id="observablescrollview里有什么">ObservableScrollView里有什么？</h3>
+
+<p>ObservableScrollView 继承自 ScrollView，因此它最多只能有一个子类，然而我们需要多个子类来实现视差滚动效果，因此，需要将一个 ViewGroup 作为ObservableScrollView 的子类，再在这个 ViewGroup 里面放更多的子类布局（上面的布局中，这个子类 ViewGroup 就是 RelativeLayout ）。</p>
+
+<p>ImageView 是将要产生视差效果的 View，如果有需要也可以用其他的View代替。</p>
+
+<p>TextView 是屏幕的主要内容，它也可以用其他的 View 代替。</p>
+
+<p>ImagaeView 和 TextView 中间的 View 是一个锚点（<code>anchor</code>），在后续内容中将解释为什么有这个锚点view 的存在。</p>
+
+<p>我们需要分开移动图像和内容，因此，它们的父类，也就是 ObservableScrollView 的子类，应该是一个<code>FrameLayout</code> 或者<code>RelativeLayout</code>，这一次我们使用 <code>RelativeLayout</code> 来实现。</p>
+
+<h3 id="父类移动时不要移动子类内容">父类移动时不要移动子类内容</h3>
+
+<p>我们如何将 ScrollView 中的主要内容（这里是一个TextView）放在图像布局的下方？</p>
+
+<p>如果我们使用<code>android:layout_below</code>属性来写的话：</p>
+
+<pre><code>&lt;!-- 这里省略了一些属性 --&gt;
+&lt;RelativeLayout&gt;
+  &lt;ImageView android:id=&quot;@+id/image&quot;&gt;
+  &lt;TextView android:layout_below=&quot;@id/image&quot;&gt;
+&lt;/RelativeLayout&gt;
+</code></pre>
+
+<p>这样写的话，TextView 会跟 ImageView 保持相同的滚动速度，因为它的布局采用<code>android:layout_below=&quot;@id/image”</code> 来定义，因此我们需要使用另外的一个 <code>anchor view</code>（锚点视图）来定义 TextView 的位置。</p>
+
+<pre><code>&lt;!-- 这里省略了一些属性 --&gt;
+&lt;RelativeLayout&gt;
+  &lt;ImageView android:id=&quot;@+id/image&quot;
+             android:layout_height=&quot;@dimen/parallax_image_height&quot;&gt;
+  &lt;View android:id=&quot;@+id/anchor&quot;
+        android:layout_height=&quot;@dimen/parallax_image_height&quot;
+        android:minHeight=&quot;@dimen/parallax_image_height&quot; /&gt;
+  &lt;TextView android:layout_below=&quot;@id/anchor&quot;&gt;
+&lt;/RelativeLayout&gt;
+</code></pre>
+
+<p>使用了这个<code>anchor view</code> 后，我们就可以单独移动ImageView了，<code>anchor view</code> 和 TextView 会留在它们的位置上。</p>
+
+<h3 id="明确设置-toolbar-内容的背景色">明确设置 Toolbar 内容的背景色</h3>
+
+<p>我们需要为 Toolbar 上的内容明确地设置一个颜色，因为这个内容是在图片上方显示出来的。</p>
+
+<pre><code>&lt;TextView android:layout_below=&quot;@id/anchor&quot;
+  android:background=&quot;@android:color/white&quot; /&gt;
+</code></pre>
+
+<h3 id="完成整个布局">完成整个布局</h3>
+
+<p>现在只需要设置布局的其他属性即可，例如<code>android:layout_width</code>, <code>android:padding</code>等等，可以在以下布局文件中查看详细的设置：</p>
+
+<ul>
+<li>res/layout/activity_parallaxtoolbarscrollview.java</li>
+</ul>
+
+<h2 id="动画效果">动画效果</h2>
+
+<h3 id="activity-的基本结构">Activity 的基本结构</h3>
+
+<p>Activity 继承自v7兼容包，并且实现 <code>ObservableScrollViewCallbacks</code> 接口。</p>
+
+<pre><code>public class ParallaxToolbarScrollViewActivity
+  extends AppCompatActivity implements ObservableScrollViewCallbacks 
+</code></pre>
+
+<h3 id="初始化-views">初始化 views</h3>
+
+<p>然后像这样初始化 views：</p>
+
+<pre><code>private View mImageView;
+private View mToolbarView;
+private ObservableScrollView mScrollView;
+private int mParallaxImageHeight;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_parallaxtoolbarscrollview);
+
+  setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+  mImageView = findViewById(R.id.image);
+  mToolbarView = findViewById(R.id.toolbar);
+  mToolbarView.setBackgroundColor(
+    ScrollUtils.getColorWithAlpha(0, getResources().getColor(R.color.primary)));
+
+  mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
+  mScrollView.setScrollViewCallbacks(this);
+
+  mParallaxImageHeight = getResources().getDimensionPixelSize(
+    R.dimen.parallax_image_height);
+}
+</code></pre>
+
+<p>初始化时，Toolbar 应该是透明的，所以用<code>ScrollUtils</code> 工具类来设置背景色的 <code>alpha</code> 值为0，这一步是可选步骤，如果你不使用 Toolbar 的话可以忽略这个步骤。</p>
+
+<h3 id="滚动时改变位置">滚动时改变位置</h3>
+
+<p>使用 <code>ObservableScrollViewCallbacks</code> 接口中的方法之一：<code>onScrollChanged()</code> 来使图像产生动画，在这个方法里我们需要做以下事情：</p>
+
+<ul>
+<li>用 <code>scrollY</code> 参量改变 ImageView 在Y轴的位置</li>
+<li>用 <code>scrollY</code> 参量改变 Toolbar 背景色的 <code>alpha</code> 值</li>
+</ul>
+
+<h3 id="改变-imageview-位置">改变 ImageView 位置</h3>
+
+<p>只需要设置 <code>translateY</code> 属性为一半的 <code>scrollY</code> 即可，如果你想要改变视差效果的程度，调整不同的值（<code>scrollY/2</code>）可即可。</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  ViewHelper.setTranslationY(mImageView, scrollY / 2);
+}
+</code></pre>
+
+<h3 id="改变-toolbar-背景色的-alpha-值">改变 Toolbar 背景色的 <code>alpha</code> 值</h3>
+
+<p>代码如下：</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  int baseColor = getResources().getColor(R.color.primary);
+  float alpha = 0; // 待设置的alpha
+  mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
+</code></pre>
+
+<p>改变 <code>alpha</code> 值有一点复杂，所以先暂时先写做 float alpha = 0。 接下来需要确认颜色的具体应用状况，完善<code>alpha</code>的值： - 如果 ObservableScrollView 没有发生过滚动，Toolbar 是透明的。（当 <code>scrollY</code> 等于0时, Toolbar 的<code>alpha</code>值为0） - 如果 ObservableScrollView 发生了滚动， Toolbar 开始渐渐变得不透明，当滚动到一个特定的点，变得完全不透明。（当 scrollY 等于 mParallaxImageHeight 时, Toolbar 的 <code>alpha</code> 值为1） 我们需要将上述情况描述成一个公式。</p>
+
+<p><code>alpha</code> 值应该从0变到1，但是 <code>scrollY</code> 值却从0变到上千，所以 <code>scrollY</code> 应该被测量，我们用 <code>scrollY</code> 除以 <code>mParallaxImageHeight</code> 的值来设定 <code>alpha</code> 值，因为当 <code>alpha</code> 变成1时，<code>scrollY</code> 应该跟 <code>mParallaxImageHeight</code> 值相等。</p>
+
+<pre><code>float alpha = (float) scrollY / mParallaxImageHeight;
+</code></pre>
+
+<p>需要注意的是，<code>scrollY</code> 和 <code>mParallaxImageHeight</code> 均为int类型，需要转换为 float 类型。 但是，当 <code>scrollY</code>值超过 <code>mParallaxImageHeight</code> 后应该怎么办？</p>
+
+<p>我们可以<code>Math.min（）</code>来限制 <code>alpha</code>的值最大只能为1。</p>
+
+<pre><code>float alpha = Math.min(1, (float) scrollY / mParallaxImageHeight);
+</code></pre>
+
+<p>这样就好了，onScrollChanged 如下：</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+  int baseColor = getResources().getColor(R.color.primary);
+  float alpha = Math.min(1, (float) scrollY / mParallaxImageHeight);
+  mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
+  ViewHelper.setTranslationY(mImageView, scrollY / 2);
+}
+</code></pre>
+
+<h3 id="恢复滚动状态">恢复滚动状态</h3>
+
+<p>我们还需要考虑一个事情，当 Activity 恢复时，我们需要恢复滚动状态的设置， ObservableScrollView 自身会存储它的滚动位置，只需要在 <code>onRestoreInstanceState（）</code>方法中更新 view 即可。</p>
+
+<pre><code>@Override
+protected void onRestoreInstanceState(Bundle savedInstanceState) {
+  super.onRestoreInstanceState(savedInstanceState);
+  onScrollChanged(mScrollView.getCurrentScrollY(), false, false);
+}
+</code></pre>
+
+<h1 id="listview">ListView</h1>
+
+<h2 id="布局-1">布局</h2>
+
+<h3 id="基本结构-1">基本结构</h3>
+
+<pre><code>&lt;FrameLayout&gt;
+  &lt;ImageView/&gt;
+  &lt;View/&gt;
+  &lt;ObservableListView/&gt;
+  &lt;Toolbar/&gt;
+&lt;/FrameLayout&gt;
+</code></pre>
+
+<p>跟 ScrollView 一样，我们用 FrameLayout 作为根布局，因为它可以分别移动该布局下的子 view。</p>
+
+<p>ImageView 是我们应该用来产生视差效果的视图。</p>
+
+<p>下一个视图跟 ScrollView 中的用法就不太一样了。</p>
+
+<h3 id="为什么用不一样的布局">为什么用不一样的布局？</h3>
+
+<p>跟 ScrollView 不同的是，ListView 不能拥有子视图，因此 ImageView 应该在 ListView 的外面，并且我们应该手动实现 ImageView 的移动。</p>
+
+<h3 id="如何放置-imageview-和-listview">如何放置 ImageView 和 ListView？</h3>
+
+<p>ImageView 要比 ListView 滚动得更慢，所以 ImageView 应该在 ListView 的下方，不然的话， ImageView 的底部就会盖住 ListView 的顶部。 同时，ListView 顶部应该有一个巨大的 padding 用来显示 ImageView。我们可以通过给 ListView 添加一个透明的 header view 来达到这个目的。</p>
+
+<h3 id="为什么需要这个透明的-view">为什么需要这个透明的 view</h3>
+
+<p>就像我在上面说过的，ListView 应该有一个透明的header，因此背景色应该也是透明的，但是如果我们仅仅把背景设置成透明，这样做不仅 header 透明了，ListView 中的 item 也会变成透明的。为了避免这种情况，我们可以在 ListView下 面设置一个假的背景 view 。</p>
+
+<h2 id="动画">动画</h2>
+
+<h3 id="activity的基本结构">Activity的基本结构</h3>
+
+<p>跟 ParallaxToolbarScrollViewActivity 一样的结构：</p>
+
+<pre><code>public class ParallaxToolbarListViewActivity
+  extends BaseActivity implements ObservableScrollViewCallbacks
+</code></pre>
+
+<h3 id="初始化视图">初始化视图</h3>
+
+<p>跟 ScrollView 一样，初始化 ObservableListView, ImageView, Toolbar等，需要注意的是 ListView 应该有一个 header view：</p>
+
+<pre><code>private View mImageView;
+private View mToolbarView;
+private View mListBackgroundView;
+private ObservableListView mListView;
+private int mParallaxImageHeight;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_parallaxtoolbarlistview) ;
+
+  setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+  mImageView = findViewById(R.id.image);
+  mToolbarView = findViewById(R.id.toolbar);
+  mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(0, getResources().getColor(R.color.primary)));
+
+  mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.parallax_image_height);
+
+  mListView = (ObservableListView) findViewById(R.id.list);
+  mListView.setScrollViewCallbacks(this);
+  // Set padding view for ListView. This is the flexible space.
+  View paddingView = new View(this);
+  AbsListView.LayoutParams lp = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+          mParallaxImageHeight);
+  paddingView.setLayoutParams(lp);
+  paddingView.setClickable(true);
+
+  mListView.addHeaderView(paddingView);
+  setDummyData(mListView);
+  mListBackgroundView = findViewById(R.id.list_background);
+</code></pre>
+
+<p>需要注意的是，为了取消 header 的点击选择效果，以下代码非常重要：</p>
+
+<pre><code>paddingView.setClickable(true);
+</code></pre>
+
+<p><code>setDummyData（）</code>用来设置内容。</p>
+
+<h2 id="滚动时改变位置-1">滚动时改变位置</h2>
+
+<p>我们用 <code>onScrollChanged</code>方法来改变视图：</p>
+
+<pre><code>@Override
+public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+}
+</code></pre>
+
+<p>我们应该设置 <code>translateY</code> 的属性为 <code>scrollY</code>值的一半，但是并不像 ScrollView一样直接把这个值赋给 <code>translateY</code>，当 <code>scrollY</code> 的值变大的时候， ImageView 的 <code>translateY</code>应该变小，因为ImageView 不是 ListView 的子类，所以我们应该用 <code>-scrollY/2</code> 作为 <code>translateY</code> 的值。（你可以改变”/2”的值来得到不一样的视差效果）。</p>
+
+<pre><code>ViewHelper.setTranslationY(mImageView, -scrollY / 2);
+</code></pre>
+
+<h3 id="改变背景视图">改变背景视图</h3>
+
+<p>背景应该跟随着 ListView 一起移动：</p>
+
+<pre><code>ViewHelper.setTranslationY(mListBackgroundView, mParallaxImageHeight - scrollY);
+</code></pre>
+
+<p>当 <code>scrollY</code> 超过 <code>mParallaxImageHeight</code>后值变为负，这是不允许的。</p>
+
+<p>我们可以用<code>Math.max（）</code>来避免这个问题：</p>
+
+<pre><code>ViewHelper.setTranslationY(mListBackgroundView, Math.max(0, -scrollY + mParallaxImageHeight));
+</code></pre>
+
+<p>其他的代码都跟 ObservableScrollView 中一样，就不赘述了。</p>
+
+<h1 id="总结">总结</h1>
+
+<p>不同的 view 实现视差效果的方法也许是有所区别的，需要我们认真的去分析，才能实现出我们想要实现的效果。</p>
+
+<p>[2]: <a href="http://blog.qiji.tech/archives/9310">http://blog.qiji.tech/archives/9310</a></p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2016 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://chiakimayuzumi.github.io/thirdlib/toolbar/" title="ObservableScrollView分析 —— 显示/隐藏 Toolbar">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              ObservableScrollView分析 —— 显示/隐藏 Toolbar
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://chiakimayuzumi.github.io/apidemos/textswitcher/" title="TextSwitcher 使用和源码分析">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              TextSwitcher 使用和源码分析
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = '';
+      var repo_id  = '';
+    
+    </script>
+
+    <script src="http://chiakimayuzumi.github.io/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+            
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+        
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//gohugo.io/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
